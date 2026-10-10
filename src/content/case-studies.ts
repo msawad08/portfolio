@@ -37,12 +37,17 @@ export const caseStudies: CaseStudy[] = [
     period: "MAY 2023 — PRESENT",
     technologies: [
       "React",
+      "Node.js",
       "NestJS",
       "PostgreSQL",
       "Redis",
       "LangGraph",
       "AWS",
       "Unreal Engine",
+      "Blueprint",
+      "C++",
+      "Shadcn",
+      "Generative AI",
     ],
     outcomes: [],
     features: [
@@ -64,6 +69,9 @@ export const caseStudies: CaseStudy[] = [
         details: [
           "Integrated Unreal Engine Pixel Streaming through WebRTC and Kinesis Video Streams on AWS.",
           "Built Redis-backed multi-user instance management for parallel rendering sessions and a WebSocket signaling server.",
+          "Connected the Unreal application to a web frontend so users can configure products and scene settings while rendering runs remotely.",
+          "The browser workflow exposes post-processing controls, time-of-day settings, backdrops, and HDRI environments.",
+          "Users can create preset or custom free-camera animations with timeline controls, then render still images and videos in multiple formats.",
         ],
       },
       {
@@ -83,6 +91,7 @@ export const caseStudies: CaseStudy[] = [
           "Applied generative models and computer-vision-assisted workflows to image and 3D production tasks.",
         details: [
           "Integrated FLUX AI for generative background creation and post-render image enhancement.",
+          "The self-service workflow supports dynamic prop and background generation alongside product and scene configuration.",
           "Developed camera matching from annotated reference images and led CAD-to-camera-ready automation for mesh generation, material mapping, and geometry processing.",
         ],
       },
@@ -116,12 +125,18 @@ export const caseStudies: CaseStudy[] = [
     id: "webgl-editor",
     number: "02",
     type: "CREATIVE TOOLING · WEBGL",
-    title: "Custom Three.js WebGL editor",
+    title: "In-house WebGL framework & editor based on Three.js",
     summary:
-      "A custom browser-based editor that brought model, animation, and hotspot workflows into a focused tool for 3D artists.",
+      "A customized WebGL framework and browser-based editor built on Three.js and forked from the open-source NunuStudio, extending its authoring workflows for organizational projects.",
     role: "Senior Software Engineer · Omnicom Media Group",
     period: "MAY 2023 — APR 2026",
-    technologies: ["Three.js", "WebGL", "Animation tooling", "Hotspots"],
+    technologies: [
+      "Three.js",
+      "WebGL",
+      "GLSL",
+      "Animation tooling",
+      "Hotspots",
+    ],
     outcomes: [],
     features: [
       {
@@ -130,8 +145,9 @@ export const caseStudies: CaseStudy[] = [
         summary:
           "Built a custom Three.js editor around the practical tasks artists needed to complete in the browser.",
         details: [
-          "Implemented animation tooling, hotspot management, and model-addition workflows.",
-          "The editor brought several content-authoring tasks into one browser-based experience.",
+          "Created a user-friendly workflow for hotspots, animation, project configuration, color and accessory selection, and product variants.",
+          "Generated JSON configuration from project files so the application could build matching interface controls dynamically.",
+          "Connected editor-authored settings to the corresponding WebGL projects, keeping interactive controls and scene behavior in sync.",
         ],
       },
       {
@@ -140,7 +156,8 @@ export const caseStudies: CaseStudy[] = [
         summary:
           "Focused the tooling on reducing friction between 3D artists and developers.",
         details: [
-          "The resume describes improved 3D artist productivity and reduced developer–artist iteration cycles.",
+          "Updated the framework for newer Three.js versions and modified its internals to support custom materials and node-based shaders.",
+          "Automated repetitive project setup and configuration tasks to improve authoring productivity and shorten developer–artist feedback cycles.",
           "No numeric productivity claim is added because the resume does not provide one.",
         ],
       },
@@ -150,7 +167,8 @@ export const caseStudies: CaseStudy[] = [
         summary:
           "Hands-on engineering of an editor as part of the broader interactive 3D platform work.",
         details: [
-          "Built the custom Three.js-based editor and its core animation, hotspot, and model workflows.",
+          "Extended the open-source NunuStudio foundation into an in-house framework and editor tailored to organizational WebGL projects.",
+          "Delivered the authoring interface, generated configuration pipeline, and framework-level Three.js material and shader support.",
           "This case study describes the professional work; no employer-owned editor interface or source code is included.",
         ],
       },
@@ -160,13 +178,18 @@ export const caseStudies: CaseStudy[] = [
       { id: "editor", title: "Three.js editor", featureId: "editing" },
       {
         id: "tools",
-        title: "Animation · hotspots · models",
+        title: "Variants · animation · hotspots",
         featureId: "editing",
       },
       {
         id: "handoff",
-        title: "Developer–artist handoff",
+        title: "JSON · UI · WebGL integration",
         featureId: "collaboration",
+      },
+      {
+        id: "framework",
+        title: "Three.js · GLSL · custom materials",
+        featureId: "ownership",
       },
     ],
   },
@@ -176,14 +199,16 @@ export const caseStudies: CaseStudy[] = [
     type: "PRODUCT · REAL-TIME VISUALIZATION",
     title: "Interior design platform",
     summary:
-      "An interior-design product connecting real-time 3D visualization, designer-client collaboration, and production-ready design assets.",
-    role: "Software Engineer II · HomeLane",
+      "An in-house 2D and 3D interior-design application for creating personalized home layouts, with real-time visualization, pricing, and production-document workflows.",
+    role: "Software Engineer II · Interior design platform",
     period: "NOV 2020 — APR 2023",
     technologies: [
       "React",
       "Node.js",
       "WebSockets",
       "Three.js",
+      "WebGL",
+      "GLSL",
       "PBR",
       "Draco",
     ],
@@ -210,6 +235,7 @@ export const caseStudies: CaseStudy[] = [
           "Built a real-time rendering experience for photorealistic furniture visualization.",
         details: [
           "Developed a Three.js rendering engine using physically based rendering shaders.",
+          "Optimized materials and textures for high-quality visualization, with progressive shadow generation to add depth while managing rendering cost.",
           "The platform served more than 50,000 monthly users, according to the supplied resume.",
         ],
       },
@@ -219,8 +245,11 @@ export const caseStudies: CaseStudy[] = [
         summary:
           "Connected design assets to the practical documents and optimized models needed downstream.",
         details: [
+          "Generated meshes dynamically so cabinetry and other interior modules connect cleanly, and automated module placement to streamline design work.",
+          "Supported real-time pricing so designers could understand budget impact while iterating on a room.",
+          "Generated 2D production documents from the 3D design to support accurate manufacturing and installation.",
           "Designed a CAD asset pipeline that converted high-poly models into optimized glTF/OBJ with Draco compression, reducing asset sizes by 40%.",
-          "Built installation drawing generation with raw-material calculations and an asset platform for artists to prepare design-ready models.",
+          "Added raw-material calculations and an asset workflow for preparing design-ready models.",
         ],
       },
     ],
@@ -232,8 +261,22 @@ export const caseStudies: CaseStudy[] = [
         featureId: "collaboration",
       },
       { id: "render", title: "Three.js + PBR", featureId: "visualization" },
+      {
+        id: "modules",
+        title: "Dynamic modules · placement",
+        featureId: "visualization",
+      },
+      {
+        id: "pricing",
+        title: "Real-time pricing",
+        featureId: "visualization",
+      },
       { id: "assets", title: "CAD → optimized glTF/OBJ", featureId: "assets" },
-      { id: "delivery", title: "Installation drawings", featureId: "assets" },
+      {
+        id: "delivery",
+        title: "2D production documents",
+        featureId: "assets",
+      },
     ],
   },
   {
@@ -252,6 +295,7 @@ export const caseStudies: CaseStudy[] = [
       "Web Workers",
       "GLSL",
       "WebVR",
+      "Custom shaders",
     ],
     outcomes: [{ value: "1M+", label: "data points supported" }],
     features: [
@@ -262,6 +306,7 @@ export const caseStudies: CaseStudy[] = [
           "Built a high-performance urban visualization application for data at million-point scale.",
         details: [
           "The application supported more than one million data points, using level-of-detail optimization.",
+          "Merged geometry and vector colors replaced per-object and multi-material overhead, improving scene efficiency.",
           "This figure describes the professional application in the resume, not this portfolio site.",
         ],
       },
@@ -272,7 +317,8 @@ export const caseStudies: CaseStudy[] = [
           "Moved computational work off the main UI thread and generated geometry from spatial data.",
         details: [
           "Implemented Web Workers for parallel processing.",
-          "Used custom GLSL shaders and GeoJSON-driven procedural building generation.",
+          "Generated buildings, trees, and monuments from GeoJSON, with roof and window details selected from building parameters.",
+          "Used custom GLSL shaders to generate terrain from height data.",
         ],
       },
       {
@@ -282,6 +328,8 @@ export const caseStudies: CaseStudy[] = [
           "Made spatial scenes explorable across desktop and immersive web experiences.",
         details: [
           "Created 3D city exploration experiences for desktop and WebVR using Three.js.",
+          "Added configurable 360-degree video paths for immersive exploration and used level of detail to adapt scene complexity.",
+          "Optimized the Three.js framework to reduce overhead for the application's rendering workloads.",
           "The portfolio presents the architecture and engineering details as an explainer rather than a stand-in for the professional application.",
         ],
       },

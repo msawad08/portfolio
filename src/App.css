@@ -404,6 +404,12 @@
   gap: 8px 24px;
   margin-top: 15px;
 }
+.outcomes-status {
+  margin: 15px 0 -8px;
+  color: var(--muted);
+  font: 9px/1.6 var(--mono);
+  letter-spacing: 0.1em;
+}
 .impact-stats div {
   display: flex;
   align-items: baseline;
@@ -1184,11 +1190,6 @@
 }
 .contact-actions {
   justify-content: center;
-}
-.contact-email-note {
-  margin-top: 19px;
-  color: #768171;
-  font: 9px var(--mono);
 }
 .site-footer {
   display: flex;

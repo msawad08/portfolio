@@ -224,7 +224,11 @@ function CaseStudyExplorer({
               </ul>
               {activeCase.outcomes.length > 0 && (
                 <div className="case-outcomes">
-                  <p className="mini-label">OUTCOMES REPORTED IN THE RESUME</p>
+                  <p className="mini-label">
+                    {activeCase.outcomesAreProjected
+                      ? "PROJECTED OUTCOMES · DESIGN GOALS"
+                      : "PROJECT OUTCOMES"}
+                  </p>
                   <div>
                     {activeCase.outcomes.map((outcome) => (
                       <article key={outcome.value}>
@@ -233,17 +237,9 @@ function CaseStudyExplorer({
                       </article>
                     ))}
                   </div>
-                  <small>
-                    These are reported outcomes from the professional project,
-                    not measurements of this portfolio.
-                  </small>
                 </div>
               )}
             </article>
-          </div>
-          <div className="case-panel-footer">
-            <span>CONTENT SOURCE · SUPPLIED RESUME</span>
-            <span>Employer system and assets are not reproduced here.</span>
           </div>
         </div>
       </div>

@@ -21,6 +21,7 @@ export type CaseStudy = {
   period: string;
   technologies: string[];
   outcomes: { value: string; label: string }[];
+  outcomesAreProjected?: boolean;
   features: CaseStudyFeature[];
   layers: CaseStudyLayer[];
 };
@@ -32,7 +33,7 @@ export const caseStudies: CaseStudy[] = [
     type: "PLATFORM · AI · REAL-TIME 3D",
     title: "AI-powered rendering platform",
     summary:
-      "An enterprise on-demand 3D rendering and marketing-content platform, spanning browser workflows, real-time rendering, AI orchestration, and cloud infrastructure.",
+      "I lead architecture and engineering for an on-demand 3D rendering and marketing platform, connecting browser workflows, Unreal Engine, AI orchestration, and cloud infrastructure.",
     role: "Lead Software Engineer; previously Senior Software Engineer · Omnicom Media Group",
     period: "MAY 2023 — PRESENT",
     technologies: [
@@ -49,60 +50,66 @@ export const caseStudies: CaseStudy[] = [
       "Shadcn",
       "Generative AI",
     ],
-    outcomes: [],
+    outcomes: [
+      { value: "50%", label: "less asset-generation turnaround time" },
+      { value: "On-demand", label: "asset generation" },
+      {
+        value: "Reduced",
+        label: "repetitive work for artists",
+      },
+    ],
     features: [
       {
         id: "platform",
         title: "Full-stack platform",
         summary:
-          "Built the initial product foundation, then took ownership of architecture and technical direction across the platform.",
+          "I built the initial product foundation and now lead architecture and technical direction across the platform.",
         details: [
-          "The initial platform combined a React and Tailwind frontend, NestJS/Node.js services, PostgreSQL, and authentication.",
-          "As Lead Software Engineer, I own the end-to-end architecture and roadmap across frontend, backend, AI orchestration, and 3D rendering infrastructure.",
+          "I established the platform with a React and Tailwind frontend, NestJS/Node.js services, PostgreSQL, and authentication.",
+          "As Lead Software Engineer, I guide the end-to-end architecture and roadmap across frontend, backend, AI orchestration, and 3D rendering infrastructure.",
         ],
       },
       {
         id: "streaming",
         title: "Real-time rendering",
         summary:
-          "Connected interactive browser workflows to Unreal Engine Pixel Streaming and coordinated parallel sessions.",
+          "I connected interactive browser workflows to Unreal Engine Pixel Streaming and coordinated parallel rendering sessions.",
         details: [
-          "Integrated Unreal Engine Pixel Streaming through WebRTC and Kinesis Video Streams on AWS.",
-          "Built Redis-backed multi-user instance management for parallel rendering sessions and a WebSocket signaling server.",
-          "Connected the Unreal application to a web frontend so users can configure products and scene settings while rendering runs remotely.",
-          "The browser workflow exposes post-processing controls, time-of-day settings, backdrops, and HDRI environments.",
-          "Users can create preset or custom free-camera animations with timeline controls, then render still images and videos in multiple formats.",
+          "I integrated Unreal Engine Pixel Streaming through WebRTC and Kinesis Video Streams on AWS.",
+          "I built Redis-backed multi-user instance management for parallel rendering sessions and a WebSocket signaling server.",
+          "I connected the Unreal application to a web frontend for product and scene configuration during remote rendering.",
+          "I added post-processing controls, time-of-day settings, backdrops, and HDRI environments to the browser workflow.",
+          "I enabled preset and custom free-camera animations with timeline controls, plus still-image and video rendering in multiple formats.",
         ],
       },
       {
         id: "ai",
         title: "AI orchestration",
         summary:
-          "Used workflow orchestration to make scene control and asset discovery more accessible.",
+          "I use workflow orchestration to make scene control and asset discovery more accessible.",
         details: [
-          "Built LangGraph workflows integrating Claude for camera animation and natural-language scene control.",
-          "Added retrieval-augmented asset management to help users find and work with relevant 3D assets.",
+          "I built LangGraph workflows with Claude for camera animation and natural-language scene control.",
+          "I added retrieval-augmented asset management to help users find relevant 3D assets.",
         ],
       },
       {
         id: "automation",
         title: "Generative workflows",
         summary:
-          "Applied generative models and computer-vision-assisted workflows to image and 3D production tasks.",
+          "I apply generative models and computer-vision-assisted workflows to image and 3D production.",
         details: [
-          "Integrated FLUX AI for generative background creation and post-render image enhancement.",
-          "The self-service workflow supports dynamic prop and background generation alongside product and scene configuration.",
-          "Developed camera matching from annotated reference images and led CAD-to-camera-ready automation for mesh generation, material mapping, and geometry processing.",
+          "I integrated FLUX AI for generative background creation and post-render image enhancement.",
+          "I added dynamic prop and background generation to the product and scene configuration workflow.",
+          "I developed camera matching from annotated reference images and led CAD-to-camera-ready automation for mesh generation, material mapping, and geometry processing.",
         ],
       },
       {
         id: "direction",
         title: "Platform direction",
         summary:
-          "Current architecture work is broadening the platform toward configurable AI workflows.",
+          "I’m broadening the platform architecture toward configurable AI workflows.",
         details: [
-          "Architecting a general-purpose node-graph workflow builder, a LiteLLM-based model-routing layer, and a generic MCP adapter framework.",
-          "These describe ongoing platform work from the supplied resume; this portfolio does not connect to or reproduce the employer platform.",
+          "I’m architecting a general-purpose node-graph workflow builder, a LiteLLM-based model-routing layer, and a generic MCP adapter framework.",
         ],
       },
     ],
@@ -127,7 +134,7 @@ export const caseStudies: CaseStudy[] = [
     type: "CREATIVE TOOLING · WEBGL",
     title: "In-house WebGL framework & editor based on Three.js",
     summary:
-      "A customized WebGL framework and browser-based editor built on Three.js and forked from the open-source NunuStudio, extending its authoring workflows for organizational projects.",
+      "I extended the open-source NunuStudio into a customized Three.js WebGL framework and editor, streamlining authoring workflows for organizational projects.",
     role: "Senior Software Engineer · Omnicom Media Group",
     period: "MAY 2023 — APR 2026",
     technologies: [
@@ -137,39 +144,47 @@ export const caseStudies: CaseStudy[] = [
       "Animation tooling",
       "Hotspots",
     ],
-    outcomes: [],
+    outcomes: [
+      { value: "5 workflows", label: "unified in one WebGL authoring tool" },
+      {
+        value: "Automated",
+        label: "project configuration generation",
+      },
+      {
+        value: "Reduced back-and-forth",
+        label: "between developers and artists",
+      },
+    ],
     features: [
       {
         id: "editing",
         title: "Editor workflows",
         summary:
-          "Built a custom Three.js editor around the practical tasks artists needed to complete in the browser.",
+          "I built a custom Three.js editor around the everyday authoring tasks 3D artists handle in the browser.",
         details: [
-          "Created a user-friendly workflow for hotspots, animation, project configuration, color and accessory selection, and product variants.",
-          "Generated JSON configuration from project files so the application could build matching interface controls dynamically.",
-          "Connected editor-authored settings to the corresponding WebGL projects, keeping interactive controls and scene behavior in sync.",
+          "I created workflows for hotspots, animation, project configuration, color and accessory selection, and product variants.",
+          "I generated JSON configuration from project files to create matching interface controls dynamically.",
+          "I connected editor-authored settings to WebGL projects, keeping interactive controls and scene behavior in sync.",
         ],
       },
       {
         id: "collaboration",
         title: "Artist–engineering handoff",
         summary:
-          "Focused the tooling on reducing friction between 3D artists and developers.",
+          "I focused the tooling on reducing friction between 3D artists and developers.",
         details: [
-          "Updated the framework for newer Three.js versions and modified its internals to support custom materials and node-based shaders.",
-          "Automated repetitive project setup and configuration tasks to improve authoring productivity and shorten developer–artist feedback cycles.",
-          "No numeric productivity claim is added because the resume does not provide one.",
+          "I updated the framework for newer Three.js versions and modified its internals to support custom materials and node-based shaders.",
+          "I automated repetitive setup and configuration tasks to improve authoring productivity and shorten developer–artist feedback cycles.",
         ],
       },
       {
         id: "ownership",
         title: "My contribution",
         summary:
-          "Hands-on engineering of an editor as part of the broader interactive 3D platform work.",
+          "I extended the framework and delivered its authoring interface and integration workflows.",
         details: [
-          "Extended the open-source NunuStudio foundation into an in-house framework and editor tailored to organizational WebGL projects.",
-          "Delivered the authoring interface, generated configuration pipeline, and framework-level Three.js material and shader support.",
-          "This case study describes the professional work; no employer-owned editor interface or source code is included.",
+          "I extended the open-source NunuStudio foundation into an in-house framework and editor tailored to organizational WebGL projects.",
+          "I delivered the authoring interface, generated configuration pipeline, and framework-level Three.js material and shader support.",
         ],
       },
     ],
@@ -199,8 +214,8 @@ export const caseStudies: CaseStudy[] = [
     type: "PRODUCT · REAL-TIME VISUALIZATION",
     title: "Interior design platform",
     summary:
-      "An in-house 2D and 3D interior-design application for creating personalized home layouts, with real-time visualization, pricing, and production-document workflows.",
-    role: "Software Engineer II · Interior design platform",
+      "I helped build an in-house 2D and 3D interior-design application for personalized home layouts, with real-time visualization, pricing, and production-document workflows.",
+    role: "Software Engineer II",
     period: "NOV 2020 — APR 2023",
     technologies: [
       "React",
@@ -213,7 +228,7 @@ export const caseStudies: CaseStudy[] = [
       "Draco",
     ],
     outcomes: [
-      { value: "50,000+", label: "monthly users served by the platform" },
+      { value: "50,000+", label: "monthly users" },
       { value: "80%", label: "fewer in-person site meetings" },
       { value: "40%", label: "smaller optimized 3D assets" },
     ],
@@ -222,34 +237,34 @@ export const caseStudies: CaseStudy[] = [
         id: "collaboration",
         title: "Real-time collaboration",
         summary:
-          "Enabled designers and clients to edit a project together while keeping shared state in sync.",
+          "I enabled designers and clients to edit projects together while keeping shared state in sync.",
         details: [
-          "Architected a collaboration system with a React frontend, Node.js backend, and WebSocket infrastructure for distributed state synchronization.",
-          "The resume attributes an 80% reduction in in-person site meetings to the real-time visualization work.",
+          "I architected a collaboration system with a React frontend, Node.js backend, and WebSocket infrastructure for distributed state synchronization.",
+          "My real-time visualization and collaboration work helped reduce in-person site meetings by 80%.",
         ],
       },
       {
         id: "visualization",
         title: "Interior visualization",
         summary:
-          "Built a real-time rendering experience for photorealistic furniture visualization.",
+          "I built a real-time rendering experience for photorealistic interior visualization.",
         details: [
-          "Developed a Three.js rendering engine using physically based rendering shaders.",
-          "Optimized materials and textures for high-quality visualization, with progressive shadow generation to add depth while managing rendering cost.",
-          "The platform served more than 50,000 monthly users, according to the supplied resume.",
+          "I developed a Three.js rendering engine using physically based rendering shaders.",
+          "I optimized materials and textures for high-quality visualization, with progressive shadow generation to add depth while managing rendering cost.",
+          "I contributed to a platform serving more than 50,000 users each month.",
         ],
       },
       {
         id: "assets",
         title: "Asset and drawing pipeline",
         summary:
-          "Connected design assets to the practical documents and optimized models needed downstream.",
+          "I connected design assets to production documents and optimized models.",
         details: [
-          "Generated meshes dynamically so cabinetry and other interior modules connect cleanly, and automated module placement to streamline design work.",
-          "Supported real-time pricing so designers could understand budget impact while iterating on a room.",
-          "Generated 2D production documents from the 3D design to support accurate manufacturing and installation.",
-          "Designed a CAD asset pipeline that converted high-poly models into optimized glTF/OBJ with Draco compression, reducing asset sizes by 40%.",
-          "Added raw-material calculations and an asset workflow for preparing design-ready models.",
+          "I generated meshes dynamically so cabinetry and other interior modules connect cleanly, and automated module placement to streamline design work.",
+          "I added real-time pricing so designers could understand budget impact while iterating on a room.",
+          "I generated 2D production documents from 3D designs to support accurate manufacturing and installation.",
+          "I designed a CAD asset pipeline that converted high-poly models into optimized glTF/OBJ with Draco compression, reducing asset sizes by 40%.",
+          "I added raw-material calculations and an asset workflow for preparing design-ready models.",
         ],
       },
     ],
@@ -285,7 +300,7 @@ export const caseStudies: CaseStudy[] = [
     type: "SPATIAL DATA · PERFORMANCE",
     title: "Geospatial visualization",
     summary:
-      "A WebGL urban-data experience designed to render large spatial datasets and procedurally generate explorable city scenes.",
+      "I built a WebGL urban-data experience for large spatial datasets and procedurally generated, explorable city scenes.",
     role: "Associate Software Developer · Juego Studios Pvt Ltd",
     period: "JUL 2017 — FEB 2019",
     technologies: [
@@ -297,40 +312,45 @@ export const caseStudies: CaseStudy[] = [
       "WebVR",
       "Custom shaders",
     ],
-    outcomes: [{ value: "1M+", label: "data points supported" }],
+    outcomes: [
+      { value: "1M+", label: "data points supported" },
+      {
+        value: "3D visualization",
+        label: "of complex urban data",
+      },
+      { value: "Optimized scenes", label: "workers, merged geometry, and LOD" },
+    ],
     features: [
       {
         id: "scale",
         title: "Large spatial datasets",
         summary:
-          "Built a high-performance urban visualization application for data at million-point scale.",
+          "I built a high-performance urban visualization application for datasets at million-point scale.",
         details: [
-          "The application supported more than one million data points, using level-of-detail optimization.",
-          "Merged geometry and vector colors replaced per-object and multi-material overhead, improving scene efficiency.",
-          "This figure describes the professional application in the resume, not this portfolio site.",
+          "I used level-of-detail optimization to support more than one million data points.",
+          "I merged geometry and used vector colors instead of per-object and multi-material rendering, improving scene efficiency.",
         ],
       },
       {
         id: "processing",
         title: "Parallel processing",
         summary:
-          "Moved computational work off the main UI thread and generated geometry from spatial data.",
+          "I moved computational work off the main UI thread and generated geometry from spatial data.",
         details: [
-          "Implemented Web Workers for parallel processing.",
-          "Generated buildings, trees, and monuments from GeoJSON, with roof and window details selected from building parameters.",
-          "Used custom GLSL shaders to generate terrain from height data.",
+          "I implemented Web Workers for parallel processing.",
+          "I generated buildings, trees, and monuments from GeoJSON, deriving roof and window details from building parameters.",
+          "I used custom GLSL shaders to generate terrain from height data.",
         ],
       },
       {
         id: "exploration",
         title: "City exploration",
         summary:
-          "Made spatial scenes explorable across desktop and immersive web experiences.",
+          "I made spatial scenes explorable across desktop and immersive web experiences.",
         details: [
-          "Created 3D city exploration experiences for desktop and WebVR using Three.js.",
-          "Added configurable 360-degree video paths for immersive exploration and used level of detail to adapt scene complexity.",
-          "Optimized the Three.js framework to reduce overhead for the application's rendering workloads.",
-          "The portfolio presents the architecture and engineering details as an explainer rather than a stand-in for the professional application.",
+          "I created 3D city exploration experiences for desktop and WebVR using Three.js.",
+          "I added configurable 360-degree video paths for immersive exploration and used level of detail to adapt scene complexity.",
+          "I optimized the Three.js framework to reduce overhead for rendering.",
         ],
       },
     ],
@@ -348,7 +368,7 @@ export const caseStudies: CaseStudy[] = [
     type: "PERSONAL PROJECT · AI · MULTI-TENANT SAAS",
     title: "Timesheet AI",
     summary:
-      "An AI-assisted timesheet platform for natural-language work logging, semantic project matching, and multi-tenant access control.",
+      "I’m building an AI-assisted timesheet platform for natural-language work logging, semantic project matching, and multi-tenant access control.",
     role: "Personal project",
     period: "2026",
     technologies: [
@@ -360,56 +380,64 @@ export const caseStudies: CaseStudy[] = [
       "Ollama",
       "CASL",
     ],
-    outcomes: [],
+    outcomes: [
+      {
+        value: "50%",
+        label: "projected reduction in time spent logging hours",
+      },
+      { value: "Accurate tracking", label: "for accounting and billing" },
+      { value: "2 options", label: "cloud SaaS or self-hosted deployment" },
+    ],
+    outcomesAreProjected: true,
     features: [
       {
         id: "logging",
         title: "AI time logging",
         summary:
-          "Turns everyday work descriptions into structured timesheet entries through a streaming AI assistant.",
+          "I turn everyday work descriptions into structured timesheet entries through a streaming AI assistant.",
         details: [
-          "The web app pairs a timesheet grid with an AI chat interface.",
-          "A dedicated Fastify worker streams conversational parsing results using server-sent events.",
+          "I paired a timesheet grid with an AI chat interface.",
+          "I built a dedicated Fastify worker to stream conversational parsing results using server-sent events.",
         ],
       },
       {
         id: "matching",
         title: "Semantic project matching",
         summary:
-          "Uses vector embeddings to match logged work descriptions with relevant projects.",
+          "I use vector embeddings to match logged work descriptions with relevant projects.",
         details: [
-          "The repository describes PostgreSQL with pgvector for semantic matching.",
-          "Local AI services use Ollama with Qwen 2.5 and nomic-embed-text models.",
+          "I use PostgreSQL with pgvector for semantic matching.",
+          "I run local AI services with Ollama, Qwen 2.5, and nomic-embed-text models.",
         ],
       },
       {
         id: "tenancy",
         title: "Multi-tenant platform",
         summary:
-          "Supports isolated organization data across cloud SaaS and self-hosted deployments.",
+          "I support isolated organization data across cloud SaaS and self-hosted deployments.",
         details: [
-          "The API gateway handles authentication, tenant management, and project management.",
-          "Shared Prisma data models support the application services.",
+          "I built an API gateway for authentication, tenant management, and project management.",
+          "I use shared Prisma data models across the application services.",
         ],
       },
       {
         id: "access",
         title: "Attribute-based access",
         summary:
-          "Applies dynamic role- and attribute-based permissions across the platform.",
+          "I apply dynamic role- and attribute-based permissions across the platform.",
         details: [
-          "CASL rules provide the attribute-based access-control layer.",
-          "Redis is used to accelerate permission checks.",
+          "I use CASL rules for attribute-based access control.",
+          "I use Redis to accelerate permission checks.",
         ],
       },
       {
         id: "streaming",
         title: "Streaming AI services",
         summary:
-          "Separates conversational AI work from the main web and API services.",
+          "I separate conversational AI processing from the main web and API services.",
         details: [
-          "A Fastify service streams AI responses over server-sent events.",
-          "A NestJS API gateway and a Next.js web client make up the other primary application services.",
+          "I built a Fastify service that streams AI responses over server-sent events.",
+          "I use a NestJS API gateway and a Next.js web client for the other primary application services.",
         ],
       },
     ],

@@ -166,17 +166,28 @@ function App() {
                       </a>
                     )}
                     {study.outcomes.length > 0 && (
-                      <div
-                        className="impact-stats"
-                        aria-label="Resume-reported project outcomes"
-                      >
-                        {study.outcomes.map((outcome) => (
-                          <div key={outcome.value}>
-                            <strong>{outcome.value}</strong>
-                            <span>{outcome.label}</span>
-                          </div>
-                        ))}
-                      </div>
+                      <>
+                        {study.outcomesAreProjected && (
+                          <p className="outcomes-status">
+                            PROJECTED OUTCOMES · DESIGN GOALS
+                          </p>
+                        )}
+                        <div
+                          className="impact-stats"
+                          aria-label={
+                            study.outcomesAreProjected
+                              ? "Projected outcomes"
+                              : "Project outcomes"
+                          }
+                        >
+                          {study.outcomes.map((outcome) => (
+                            <div key={outcome.value}>
+                              <strong>{outcome.value}</strong>
+                              <span>{outcome.label}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </>
                     )}
                     <ul className="tag-list" aria-label="Project technologies">
                       {study.technologies.map((technology) => (
@@ -198,8 +209,8 @@ function App() {
             <div className="projects-caption">
               <span>01 — 05</span>
               <span>
-                Project details are based on resume evidence and the Timesheet
-                AI source repository.
+                A selection of my work across platforms, products, and applied
+                AI.
               </span>
             </div>
           </div>
@@ -269,7 +280,7 @@ function App() {
               </p>
               <h2 id="experience-title">A career in building what’s next.</h2>
               <p className="section-intro">
-                Titles and dates are taken from the supplied resume.
+                A timeline of the teams and products I’ve helped build.
               </p>
             </div>
             <ol className="timeline">
@@ -348,8 +359,8 @@ function App() {
                 <div>
                   <h3>Quran Kannada</h3>
                   <p>
-                    Built by me in collaboration with Islamic Way. See the app
-                    project and current store listings.
+                    I built this in collaboration with Islamic Way. Explore the
+                    project and its current store listings.
                   </p>
                   <div className="other-app-links">
                     <a
@@ -381,8 +392,8 @@ function App() {
                 <div>
                   <h3>Manqoos Mawlid</h3>
                   <p>
-                    An app featuring Kannada and English translation and
-                    recitation.
+                    I contributed to an app featuring Kannada and English
+                    translations and recitation.
                   </p>
                   <div className="other-app-links">
                     <a
@@ -441,9 +452,6 @@ function App() {
                 Explore GitHub <span aria-hidden="true">↗</span>
               </a>
             </div>
-            <span className="contact-email-note">
-              Direct email address pending confirmation.
-            </span>
           </div>
         </section>
       </main>

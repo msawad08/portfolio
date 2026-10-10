@@ -13,6 +13,7 @@ dist-ssr
 *.local
 /Mohammed_Sawad_Resume_FA_1026.pdf
 /Mohammed_Sawad_Interactive_3D_Portfolio_Plan_Updated.md
+/docs/content-sources.md
 
 # Editor directories and files
 .vscode/*

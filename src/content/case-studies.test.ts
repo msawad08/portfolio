@@ -19,7 +19,7 @@ describe("case study content", () => {
     }
   });
 
-  it("covers the resume-supported featured projects", () => {
+  it("includes each featured project and the measured interior outcomes", () => {
     expect(caseStudies.map((study) => study.id)).toEqual([
       "omni-3d",
       "webgl-editor",
@@ -39,5 +39,30 @@ describe("case study content", () => {
     expect(
       caseStudies.find((study) => study.id === "timesheet-ai")?.features,
     ).toHaveLength(5);
+  });
+
+  it("provides a numeric outcome for every project and marks Timesheet AI projections", () => {
+    const timesheet = caseStudies.find((study) => study.id === "timesheet-ai");
+
+    expect(caseStudies.every((study) => study.outcomes.length > 0)).toBe(true);
+    expect(
+      caseStudies.every((study) =>
+        study.outcomes.some(({ value }) => /\d/.test(value)),
+      ),
+    ).toBe(true);
+    expect(timesheet?.outcomesAreProjected).toBe(true);
+    expect(timesheet?.outcomes).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          value: "50%",
+          label: expect.stringContaining("projected"),
+        }),
+      ]),
+    );
+    expect(
+      caseStudies
+        .filter((study) => study.id !== "timesheet-ai")
+        .every((study) => !study.outcomesAreProjected),
+    ).toBe(true);
   });
 });

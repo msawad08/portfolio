@@ -280,6 +280,7 @@ function createCinematicSequence() {
   }
 
   addBox(sequence, [0.035, 0.42, 0.035], [0.16, 0.38, 0.12], "#d4bc7b", 0.38);
+  sequence.rotateY(120 * (Math.PI / 180));
   return sequence;
 }
 
@@ -329,6 +330,7 @@ function createSceneLightRig() {
       "#59655a",
     );
   }
+    rig.rotateY(60 * (Math.PI / 180));
 
   return rig;
 }

@@ -1,6 +1,6 @@
 # Mohammed Sawad — Interactive Portfolio
 
-I work across product engineering, cloud systems, and real-time 3D. This portfolio brings selected projects to life through interactive case studies, where you can explore the architecture, features, and outcomes behind each one.
+A portfolio of work across product engineering, cloud systems, and real-time 3D. Interactive case studies bring each project’s architecture, features, and outcomes into focus.
 
 ## Requirements
 
@@ -37,4 +37,4 @@ The AI-rendering scene uses D_U's [Toyota Corolla model](https://sketchfab.com/3
 - `src/App.tsx` — portfolio sections and project navigation
 - `src/components/CaseStudyExplorer.tsx` — interactive project, architecture, and feature explainer
 - `src/components/CaseStudyMap3D.tsx` — interactive Three.js case-study map
-- `src/content/case-studies.ts` — resume-backed case study copy and selectable system layers
+- `src/content/case-studies.ts` — project case studies and selectable system layers

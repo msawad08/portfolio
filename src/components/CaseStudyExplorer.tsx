@@ -72,7 +72,7 @@ function CaseStudyExplorer({
           </div>
           <p className="section-intro">
             Choose a project, then explore its system areas in 3D or use the
-            feature list to read about my contribution.
+            feature list to explore its capabilities and engineering details.
           </p>
         </div>
 
@@ -185,7 +185,7 @@ function CaseStudyExplorer({
 
             <article className="feature-detail" aria-live="polite">
               <div className="feature-detail-topline">
-                <span className="mini-label">FEATURE / CONTRIBUTION</span>
+                <span className="mini-label">FEATURE / SYSTEM DETAIL</span>
                 <span className="feature-index">
                   {String(
                     activeCase.features.findIndex(

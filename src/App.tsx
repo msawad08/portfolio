@@ -56,12 +56,12 @@ function App() {
               Building systems that bring ideas <em>into focus.</em>
             </h1>
             <p className="hero-summary">
-              I design and build intelligent products across AI workflows, cloud
-              platforms, full-stack engineering, and real-time 3D.
+              Intelligent products across AI workflows, cloud platforms,
+              full-stack engineering, and real-time 3D.
             </p>
             <div className="hero-actions">
               <a className="button button-primary" href="#work">
-                My Projects <span aria-hidden="true">↓</span>
+                Selected Work <span aria-hidden="true">↓</span>
               </a>
               {resumeDownloadUrl && (
                 <a
@@ -209,8 +209,7 @@ function App() {
             <div className="projects-caption">
               <span>01 — 05</span>
               <span>
-                A selection of my work across platforms, products, and applied
-                AI.
+                Selected work across platforms, products, and applied AI.
               </span>
             </div>
           </div>
@@ -237,15 +236,15 @@ function App() {
             </div>
             <div className="about-copy">
               <p>
-                I’m a software architect and engineer with 9+ years of
-                experience building products across real-time 3D, full-stack
-                systems, and applied AI. I work from the underlying architecture
-                through to the experience people actually use.
+                Software architect and engineer with 9+ years of experience
+                building products across real-time 3D, full-stack systems, and
+                applied AI. Experience spans the underlying architecture through
+                to the product experience.
               </p>
               <p>
-                My work includes AI orchestration, rendering platforms, browser
-                tooling, interior-design collaboration, asset pipelines, and
-                large-scale geospatial visualization.
+                Focus areas include AI orchestration, rendering platforms,
+                browser tooling, interior-design collaboration, asset pipelines,
+                and large-scale geospatial visualization.
               </p>
               <div className="strength-grid">
                 <div>
@@ -280,7 +279,7 @@ function App() {
               </p>
               <h2 id="experience-title">A career in building what’s next.</h2>
               <p className="section-intro">
-                A timeline of the teams and products I’ve helped build.
+                A timeline of teams, roles, and products across the career.
               </p>
             </div>
             <ol className="timeline">
@@ -344,13 +343,13 @@ function App() {
             <div className="section-heading">
               <div>
                 <p className="eyebrow">
-                  MORE FROM MY WORK <span className="eyebrow-line" />
+                  MORE PROJECTS <span className="eyebrow-line" />
                 </p>
                 <h2 id="other-apps-title">Other apps.</h2>
               </div>
               <p className="section-intro">
-                A couple of smaller app projects, separate from my main
-                engineering case studies.
+                Additional app projects alongside the featured engineering case
+                studies.
               </p>
             </div>
             <div className="other-apps-grid">
@@ -359,8 +358,8 @@ function App() {
                 <div>
                   <h3>Quran Kannada</h3>
                   <p>
-                    I built this in collaboration with Islamic Way. Explore the
-                    project and its current store listings.
+                    A Quran app developed in collaboration with Islamic Way,
+                    available on Google Play and the App Store.
                   </p>
                   <div className="other-app-links">
                     <a
@@ -392,7 +391,7 @@ function App() {
                 <div>
                   <h3>Manqoos Mawlid</h3>
                   <p>
-                    I contributed to an app featuring Kannada and English
+                    A multilingual app featuring Kannada and English
                     translations and recitation.
                   </p>
                   <div className="other-app-links">

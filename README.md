@@ -1,6 +1,6 @@
 # Mohammed Sawad — Interactive Portfolio
 
-A responsive portfolio built with Vite, React, TypeScript, and Three.js. Interactive 3D case-study maps let readers orbit a project’s system areas and select components to explore resume-backed features, contributions, and outcomes. The site explains professional work rather than imitating an employer product.
+I work across product engineering, cloud systems, and real-time 3D. This portfolio brings selected projects to life through interactive case studies, where you can explore the architecture, features, and outcomes behind each one.
 
 ## Requirements
 

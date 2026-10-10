@@ -695,6 +695,21 @@
   outline: 2px solid var(--accent);
   outline-offset: -4px;
 }
+.case-map-attribution {
+  display: block;
+  padding: 6px 12px;
+  border-top: 1px solid #30392f;
+  background: #171c17;
+  color: #c0cbb8;
+  font: 8px/1.5 var(--mono);
+  text-align: right;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.case-map-attribution:hover,
+.case-map-attribution:focus-visible {
+  color: var(--accent);
+}
 .case-map-fallback {
   position: absolute;
   inset: 0;

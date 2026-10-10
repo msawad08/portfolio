@@ -364,54 +364,69 @@ function addInteriorRoom(map: THREE.Group) {
 }
 
 function addParisCity(map: THREE.Group) {
-  const pavement = new THREE.Mesh(
-    new THREE.BoxGeometry(8, 0.1, 5),
-    new THREE.MeshStandardMaterial({ color: "#3e4643", roughness: 0.88 }),
-  );
-  pavement.position.set(0, -0.68, -1.1);
-  map.add(pavement);
+  const tileZoom = 16;
+  const tileSize = 2.35;
+  const tower = { latitude: 48.8584, longitude: 2.2945 };
+  const tileCount = 2 ** tileZoom;
+  const towerTileX = ((tower.longitude + 180) / 360) * tileCount;
+  const latitudeRadians = (tower.latitude * Math.PI) / 180;
+  const towerTileY =
+    ((1 - Math.asinh(Math.tan(latitudeRadians)) / Math.PI) / 2) * tileCount;
+  const centerTile = { x: Math.floor(towerTileX), y: Math.floor(towerTileY) };
+  const towerPosition = {
+    x: (towerTileX - centerTile.x - 0.5) * tileSize,
+    z: (towerTileY - centerTile.y - 0.5) * tileSize,
+  };
+  addBox(map, [tileSize * 3, 0.14, tileSize * 3], [0, -0.7, 0], "#39413b");
+  const tiles = new THREE.Group();
+  map.add(tiles);
+  const tileLoader = new THREE.TextureLoader();
+  tileLoader.setCrossOrigin("anonymous");
+  for (let row = -1; row <= 1; row += 1) {
+    for (let column = -1; column <= 1; column += 1) {
+      const material = new THREE.MeshBasicMaterial({ color: "#d2d3c6" });
+      const tile = new THREE.Mesh(
+        new THREE.PlaneGeometry(tileSize, tileSize),
+        material,
+      );
+      tile.rotation.x = -Math.PI / 2;
+      tile.position.set(column * tileSize, -0.625, row * tileSize);
+      tiles.add(tile);
+
+      const x = centerTile.x + column;
+      const y = centerTile.y + row;
+      tileLoader.load(
+        `https://tile.openstreetmap.org/${tileZoom}/${x}/${y}.png`,
+        (texture) => {
+          if (map.userData.disposed) {
+            texture.dispose();
+            return;
+          }
+          texture.colorSpace = THREE.SRGBColorSpace;
+          material.map = texture;
+          material.color.set("#ffffff");
+          material.needsUpdate = true;
+        },
+        undefined,
+        (error: unknown) => {
+          console.warn(`Unable to load Paris map tile ${x}/${y}`, error);
+        },
+      );
+    }
+  }
+
   const eiffelAnchor = new THREE.Group();
   eiffelAnchor.name = "eiffel-tower-anchor";
-  eiffelAnchor.position.set(0, -0.62, -1.7);
+  eiffelAnchor.position.set(towerPosition.x, -0.62, towerPosition.z);
   map.add(eiffelAnchor);
-  const blocks = [
-    [-3.05, 0.45, -2.4, 1.05, 1.6, 0.85],
-    [2.95, 0.65, -2.35, 1.1, 2, 0.9],
-    [-2.95, 0.28, 0.55, 0.9, 1.25, 0.85],
-    [2.95, 0.35, 0.48, 1, 1.4, 0.85],
-    [0, 0.2, -3.25, 1.2, 1, 0.8],
-  ];
-  blocks.forEach(([x, y, z, width, height, depth], index) => {
-    const building = new THREE.Group();
-    building.position.set(x, y - 0.62, z);
-    map.add(building);
-    const facade = ["#c7b69b", "#b8a88f", "#d0c3a9"][index % 3];
-    addBox(building, [width, height, depth], [0, height / 2, 0], facade);
-    const roof = new THREE.Mesh(
-      new THREE.ConeGeometry(width * 0.72, 0.36, index % 2 ? 4 : 8),
-      new THREE.MeshStandardMaterial({ color: "#495253", roughness: 0.82 }),
-    );
-    roof.position.set(0, height + 0.18, 0);
-    roof.rotation.y = index % 2 ? Math.PI / 4 : 0;
-    building.add(roof);
-    for (let row = 0; row < 2; row += 1) {
-      for (let column = -1; column <= 1; column += 1) {
-        addBox(
-          building,
-          [0.12, 0.18, 0.025],
-          [column * width * 0.25, 0.28 + row * 0.36, depth / 2 + 0.02],
-          "#59666a",
-          0.35,
-        );
-      }
-    }
-  });
 }
 
 function addOfficeDesk(map: THREE.Group) {
-  addBox(map, [5.2, 0.18, 2.3], [0, -0.25, 0], "#554b40");
-  for (const x of [-2.25, 2.25]) {
-    addBox(map, [0.14, 1.7, 0.14], [x, -1.1, 0], "#383c39");
+  addBox(map, [5.4, 0.18, 2.5], [0, -0.25, 0], "#554b40");
+  for (const x of [-2.35, 2.35]) {
+    for (const z of [-0.9, 0.9]) {
+      addBox(map, [0.14, 1.7, 0.14], [x, -1.1, z], "#383c39");
+    }
   }
 }
 
@@ -732,7 +747,7 @@ function CaseStudyMap3D({
     camera.position.set(
       0,
       caseId === "omni-3d" ? 3.1 : 3.45,
-      caseId === "omni-3d" ? 8.2 : 7.7,
+      caseId === "omni-3d" ? 8.2 : caseId === "geospatial" ? 10.5 : 7.7,
     );
 
     scene.add(new THREE.HemisphereLight("#e3efd7", "#1c241d", 2.2));
@@ -814,18 +829,21 @@ function CaseStudyMap3D({
         ];
         node.position.set(...roomPositions[index % roomPositions.length]);
       } else if (caseId === "geospatial") {
-        node.position.set(
-          (index - (features.length - 1) / 2) * 2.4,
-          -0.3,
-          0.95,
-        );
+        const cityPositions: [number, number, number][] = [
+          [-2.65, -0.3, -2.2],
+          [2.55, -0.3, -2.35],
+          [-2.8, -0.3, 1.2],
+          [2.85, -0.3, 1.15],
+          [0.15, -0.3, 3.05],
+        ];
+        node.position.set(...cityPositions[index % cityPositions.length]);
       } else if (caseId === "timesheet-ai") {
         const deskPositions: [number, number, number][] = [
-          [-1.2, -0.1, -0.62],
-          [-0.42, -0.12, 0.48],
-          [0.82, -0.12, 0.45],
-          [-2.05, -0.12, 0.25],
-          [2.02, -0.12, -0.3],
+          [-1.35, -0.16, -0.48],
+          [-0.15, -0.14, 0.57],
+          [1.08, -0.08, 0.48],
+          [-2.02, -0.16, 0.54],
+          [2.02, -0.16, -0.28],
         ];
         node.position.set(...deskPositions[index % deskPositions.length]);
       } else if (caseId === "webgl-editor") {
@@ -998,12 +1016,18 @@ function CaseStudyMap3D({
     updateFeatureVisuals(map, activeFeatureRef.current);
 
     const controls = new OrbitControls(camera, renderer.domElement);
-    controls.target.set(0, caseId === "omni-3d" ? 0.05 : 0.55, 0);
+    controls.target.set(
+      0,
+      caseId === "geospatial" ? 0.05 : caseId === "omni-3d" ? 0.05 : 0.55,
+      0,
+    );
     controls.enableDamping = true;
     controls.dampingFactor = 0.07;
     controls.enablePan = false;
-    controls.minDistance = caseId === "omni-3d" ? 7.5 : 6.5;
-    controls.maxDistance = caseId === "omni-3d" ? 11 : 10;
+    controls.minDistance =
+      caseId === "omni-3d" ? 7.5 : caseId === "geospatial" ? 8.8 : 6.5;
+    controls.maxDistance =
+      caseId === "omni-3d" ? 11 : caseId === "geospatial" ? 14 : 10;
     controls.minPolarAngle = 0.72;
     controls.maxPolarAngle = 1.65;
     const reducedMotion = window.matchMedia(
@@ -1137,6 +1161,7 @@ function CaseStudyMap3D({
       renderRequestRef.current = null;
       mapRef.current = null;
       reducedMotionRef.current = false;
+      map.userData.disposed = true;
       map.traverse((object) => {
         if (!(object instanceof THREE.Mesh || object instanceof THREE.Sprite)) {
           return;
@@ -1146,7 +1171,10 @@ function CaseStudyMap3D({
           ? object.material
           : [object.material];
         materials.forEach((material) => {
-          if (material instanceof THREE.SpriteMaterial) {
+          if (
+            (material instanceof THREE.SpriteMaterial || "map" in material) &&
+            material.map instanceof THREE.Texture
+          ) {
             material.map?.dispose();
           }
           material.dispose();
@@ -1166,6 +1194,16 @@ function CaseStudyMap3D({
           feature selectors below.
         </div>
       </div>
+      {caseId === "geospatial" && (
+        <a
+          className="case-map-attribution"
+          href="https://www.openstreetmap.org/copyright"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Map tiles and data © OpenStreetMap contributors · ODbL
+        </a>
+      )}
       <span className="case-map-hint">DRAG TO ROTATE · SELECT A FEATURE</span>
       <div className="case-map-actions">
         {prefersReducedMotion ? (

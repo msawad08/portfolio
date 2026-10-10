@@ -25,6 +25,7 @@ describe("case study content", () => {
       "webgl-editor",
       "homelane",
       "geospatial",
+      "timesheet-ai",
     ]);
     expect(
       caseStudies.find((study) => study.id === "homelane")?.outcomes,
@@ -35,5 +36,8 @@ describe("case study content", () => {
         expect.objectContaining({ value: "40%" }),
       ]),
     );
+    expect(
+      caseStudies.find((study) => study.id === "timesheet-ai")?.features,
+    ).toHaveLength(5);
   });
 });

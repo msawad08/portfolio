@@ -120,6 +120,7 @@ function CaseStudyExplorer({
                     }
                   >
                     <CaseStudyMap3D
+                      caseId={activeCase.id}
                       caseTitle={activeCase.title}
                       features={activeCase.features}
                       activeFeatureId={activeFeature.id}

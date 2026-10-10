@@ -391,6 +391,12 @@
   font-size: 12px;
   line-height: 1.75;
 }
+.project-source-link {
+  display: inline-block;
+  margin-top: 10px;
+  color: var(--accent);
+  font-size: 10px;
+}
 .impact-stats {
   display: flex;
   align-items: start;

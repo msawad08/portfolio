@@ -43,9 +43,9 @@ To enable the **Download Resume** link without storing a resume PDF in Git, add 
 
 ## Content and privacy
 
-The supplied resume is the source for the initial project selection, experience timeline, and supported metrics. The source resume and original portfolio plan are excluded from Git. No resume file is stored in or deployed from this repository.
+The supplied resume is the source for the professional project selection, experience timeline, and supported metrics. Timesheet AI details are based on its public repository README and package metadata. Its 3D office desk is an explanatory portfolio scene, not a live app preview or a claim about its UI. The source resume and original portfolio plan are excluded from Git. No resume file is stored in or deployed from this repository.
 
-Timesheet AI details, direct email, older role dates, employer/client permissions, and any project-specific media must be verified before they are added. Unsupported facts are intentionally marked as pending in the UI. See [`docs/content-sources.md`](docs/content-sources.md), [`docs/asset-licenses.md`](docs/asset-licenses.md), and [`docs/release-checklist.md`](docs/release-checklist.md).
+Direct email, older role dates, employer/client permissions, and any project-specific media must be verified before they are added. Unsupported facts are intentionally left out. See [`docs/content-sources.md`](docs/content-sources.md), [`docs/asset-licenses.md`](docs/asset-licenses.md), and [`docs/release-checklist.md`](docs/release-checklist.md).
 
 ## Project layout
 

@@ -155,6 +155,16 @@ function App() {
                     <p className="project-type">{study.type}</p>
                     <h3>{study.title}</h3>
                     <p>{study.summary}</p>
+                    {study.id === "timesheet-ai" && (
+                      <a
+                        className="project-source-link"
+                        href="https://github.com/msawad08/timesheet-ai"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        View source repository <span aria-hidden="true">↗</span>
+                      </a>
+                    )}
                     {study.outcomes.length > 0 && (
                       <div
                         className="impact-stats"
@@ -184,29 +194,12 @@ function App() {
                   </button>
                 </article>
               ))}
-              <article className="project-row project-row-pending">
-                <span className="project-number">05</span>
-                <div className="project-main">
-                  <p className="project-type">PRODUCT · SOURCE REVIEW NEEDED</p>
-                  <h3>Timesheet AI</h3>
-                  <p>
-                    Project details will be added after reviewing its source
-                    repository and confirming which features are ready to share.
-                  </p>
-                  <span className="pending-badge">
-                    DETAILS PENDING SOURCE REVIEW
-                  </span>
-                </div>
-                <span className="pending-lock" aria-hidden="true">
-                  ···
-                </span>
-              </article>
             </div>
             <div className="projects-caption">
               <span>01 — 05</span>
               <span>
-                Project details are grounded in the supplied resume; Timesheet
-                AI awaits source verification.
+                Project details are based on resume evidence and the Timesheet
+                AI source repository.
               </span>
             </div>
           </div>

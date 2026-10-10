@@ -174,7 +174,7 @@ export const caseStudies: CaseStudy[] = [
     id: "homelane",
     number: "03",
     type: "PRODUCT · REAL-TIME VISUALIZATION",
-    title: "HomeLane interior platform",
+    title: "Interior design platform",
     summary:
       "An interior-design product connecting real-time 3D visualization, designer-client collaboration, and production-ready design assets.",
     role: "Software Engineer II · HomeLane",
@@ -292,6 +292,94 @@ export const caseStudies: CaseStudy[] = [
       { id: "lod", title: "LOD + GLSL", featureId: "scale" },
       { id: "webgl", title: "WebGL visualization", featureId: "scale" },
       { id: "desktop", title: "Desktop + WebVR", featureId: "exploration" },
+    ],
+  },
+  {
+    id: "timesheet-ai",
+    number: "05",
+    type: "PERSONAL PROJECT · AI · MULTI-TENANT SAAS",
+    title: "Timesheet AI",
+    summary:
+      "An AI-assisted timesheet platform for natural-language work logging, semantic project matching, and multi-tenant access control.",
+    role: "Personal project",
+    period: "2026",
+    technologies: [
+      "Next.js",
+      "NestJS",
+      "Fastify",
+      "PostgreSQL + pgvector",
+      "Redis",
+      "Ollama",
+      "CASL",
+    ],
+    outcomes: [],
+    features: [
+      {
+        id: "logging",
+        title: "AI time logging",
+        summary:
+          "Turns everyday work descriptions into structured timesheet entries through a streaming AI assistant.",
+        details: [
+          "The web app pairs a timesheet grid with an AI chat interface.",
+          "A dedicated Fastify worker streams conversational parsing results using server-sent events.",
+        ],
+      },
+      {
+        id: "matching",
+        title: "Semantic project matching",
+        summary:
+          "Uses vector embeddings to match logged work descriptions with relevant projects.",
+        details: [
+          "The repository describes PostgreSQL with pgvector for semantic matching.",
+          "Local AI services use Ollama with Qwen 2.5 and nomic-embed-text models.",
+        ],
+      },
+      {
+        id: "tenancy",
+        title: "Multi-tenant platform",
+        summary:
+          "Supports isolated organization data across cloud SaaS and self-hosted deployments.",
+        details: [
+          "The API gateway handles authentication, tenant management, and project management.",
+          "Shared Prisma data models support the application services.",
+        ],
+      },
+      {
+        id: "access",
+        title: "Attribute-based access",
+        summary:
+          "Applies dynamic role- and attribute-based permissions across the platform.",
+        details: [
+          "CASL rules provide the attribute-based access-control layer.",
+          "Redis is used to accelerate permission checks.",
+        ],
+      },
+      {
+        id: "streaming",
+        title: "Streaming AI services",
+        summary:
+          "Separates conversational AI work from the main web and API services.",
+        details: [
+          "A Fastify service streams AI responses over server-sent events.",
+          "A NestJS API gateway and a Next.js web client make up the other primary application services.",
+        ],
+      },
+    ],
+    layers: [
+      { id: "grid", title: "Timesheet grid", featureId: "logging" },
+      { id: "assistant", title: "AI assistant", featureId: "logging" },
+      {
+        id: "vectors",
+        title: "Project matching · pgvector",
+        featureId: "matching",
+      },
+      { id: "tenants", title: "Tenant isolation", featureId: "tenancy" },
+      { id: "permissions", title: "CASL · Redis", featureId: "access" },
+      {
+        id: "services",
+        title: "NestJS · Fastify · Next.js",
+        featureId: "streaming",
+      },
     ],
   },
 ];

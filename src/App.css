@@ -710,6 +710,15 @@
 .case-map-attribution:focus-visible {
   color: var(--accent);
 }
+.case-map-data-status {
+  display: block;
+  padding: 6px 12px;
+  border-top: 1px solid #30392f;
+  background: #171c17;
+  color: #9aa68f;
+  font: 8px/1.5 var(--mono);
+  text-align: center;
+}
 .case-map-fallback {
   position: absolute;
   inset: 0;

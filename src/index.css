@@ -1,0 +1,68 @@
+:root {
+  font-family: "Avenir Next", "Segoe UI", sans-serif;
+  color: #e7e9e4;
+  background: #121512;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  --bg: #121512;
+  --surface: #191d19;
+  --surface-soft: #202520;
+  --line: #30372f;
+  --line-bright: #454d43;
+  --text: #e7e9e4;
+  --muted: #9ba398;
+  --quiet: #687166;
+  --accent: #c7ef79;
+  --accent-deep: #9bc94a;
+  --warm: #dda96e;
+  --mono: "Cascadia Code", "Consolas", monospace;
+  --heading: "Avenir Next", "Segoe UI", sans-serif;
+  scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  min-width: 320px;
+  background: var(--bg);
+}
+button,
+input,
+select {
+  font: inherit;
+}
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+a {
+  color: inherit;
+}
+button:focus-visible,
+a:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+::selection {
+  color: #10140b;
+  background: var(--accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

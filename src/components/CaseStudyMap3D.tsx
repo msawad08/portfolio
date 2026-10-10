@@ -8,6 +8,24 @@ import cameraModelUrl from "../assets/3d-models/camera.glb?url";
 import eiffelModelUrl from "../assets/3d-models/Eiffel.glb?url";
 import type { CaseStudyFeature } from "../content/case-studies";
 
+const PARIS_TILE_ZOOM = 16;
+const PARIS_TILE_SIZE = 3.05;
+const PARIS_TILE_RADIUS = 4;
+const PARIS_TILE_COUNT = PARIS_TILE_RADIUS * 2 + 1;
+
+type ParisMapProjection = {
+  tileZoom: number;
+  tileSize: number;
+  centerTileX: number;
+  centerTileY: number;
+};
+
+type ParisTileRequest = {
+  x: number;
+  y: number;
+  material: THREE.MeshBasicMaterial;
+};
+
 type CaseStudyMap3DProps = {
   caseId: string;
   caseTitle: string;
@@ -363,27 +381,62 @@ function addInteriorRoom(map: THREE.Group) {
   addBox(map, [7, 0.06, 0.06], [0, -0.52, -1.91], "#d0c6b1");
 }
 
+function longitudeToTile(longitude: number, zoom: number) {
+  return ((longitude + 180) / 360) * 2 ** zoom;
+}
+
+function latitudeToTile(latitude: number, zoom: number) {
+  const radians = (latitude * Math.PI) / 180;
+  return ((1 - Math.asinh(Math.tan(radians)) / Math.PI) / 2) * 2 ** zoom;
+}
+
+function projectParisCoordinate(
+  latitude: number,
+  longitude: number,
+  projection: ParisMapProjection,
+) {
+  return new THREE.Vector2(
+    (longitudeToTile(longitude, projection.tileZoom) -
+      projection.centerTileX -
+      0.5) *
+      projection.tileSize,
+    (latitudeToTile(latitude, projection.tileZoom) -
+      projection.centerTileY -
+      0.5) *
+      projection.tileSize,
+  );
+}
+
 function addParisCity(map: THREE.Group) {
-  const tileZoom = 16;
-  const tileSize = 2.35;
+  const tileZoom = PARIS_TILE_ZOOM;
+  const tileSize = PARIS_TILE_SIZE;
   const tower = { latitude: 48.8584, longitude: 2.2945 };
-  const tileCount = 2 ** tileZoom;
-  const towerTileX = ((tower.longitude + 180) / 360) * tileCount;
-  const latitudeRadians = (tower.latitude * Math.PI) / 180;
-  const towerTileY =
-    ((1 - Math.asinh(Math.tan(latitudeRadians)) / Math.PI) / 2) * tileCount;
-  const centerTile = { x: Math.floor(towerTileX), y: Math.floor(towerTileY) };
-  const towerPosition = {
-    x: (towerTileX - centerTile.x - 0.5) * tileSize,
-    z: (towerTileY - centerTile.y - 0.5) * tileSize,
+  const towerTileX = longitudeToTile(tower.longitude, tileZoom);
+  const towerTileY = latitudeToTile(tower.latitude, tileZoom);
+  const projection: ParisMapProjection = {
+    tileZoom,
+    tileSize,
+    centerTileX: Math.floor(towerTileX),
+    centerTileY: Math.floor(towerTileY),
   };
-  addBox(map, [tileSize * 3, 0.14, tileSize * 3], [0, -0.7, 0], "#39413b");
+  const towerPosition = projectParisCoordinate(
+    tower.latitude,
+    tower.longitude,
+    projection,
+  );
+  const mapSize = tileSize * PARIS_TILE_COUNT;
+  addBox(map, [mapSize, 0.14, mapSize], [0, -0.7, 0], "#39413b");
   const tiles = new THREE.Group();
   map.add(tiles);
   const tileLoader = new THREE.TextureLoader();
   tileLoader.setCrossOrigin("anonymous");
-  for (let row = -1; row <= 1; row += 1) {
-    for (let column = -1; column <= 1; column += 1) {
+  const tileRequests: ParisTileRequest[] = [];
+  for (let row = -PARIS_TILE_RADIUS; row <= PARIS_TILE_RADIUS; row += 1) {
+    for (
+      let column = -PARIS_TILE_RADIUS;
+      column <= PARIS_TILE_RADIUS;
+      column += 1
+    ) {
       const material = new THREE.MeshBasicMaterial({ color: "#d2d3c6" });
       const tile = new THREE.Mesh(
         new THREE.PlaneGeometry(tileSize, tileSize),
@@ -393,32 +446,66 @@ function addParisCity(map: THREE.Group) {
       tile.position.set(column * tileSize, -0.625, row * tileSize);
       tiles.add(tile);
 
-      const x = centerTile.x + column;
-      const y = centerTile.y + row;
+      const x = projection.centerTileX + column;
+      const y = projection.centerTileY + row;
+      tileRequests.push({
+        x,
+        y,
+        material: material,
+      });
+    }
+  }
+  tileRequests.sort((left, right) => {
+    const leftDistance =
+      (left.x - projection.centerTileX) ** 2 +
+      (left.y - projection.centerTileY) ** 2;
+    const rightDistance =
+      (right.x - projection.centerTileX) ** 2 +
+      (right.y - projection.centerTileY) ** 2;
+    return leftDistance - rightDistance;
+  });
+  let nextTileIndex = 0;
+  let activeTileRequests = 0;
+  const loadNextTiles = () => {
+    while (
+      activeTileRequests < 2 &&
+      nextTileIndex < tileRequests.length &&
+      !map.userData.disposed
+    ) {
+      const { material, x, y } = tileRequests[nextTileIndex];
+      nextTileIndex += 1;
+      activeTileRequests += 1;
       tileLoader.load(
         `https://tile.openstreetmap.org/${tileZoom}/${x}/${y}.png`,
         (texture) => {
+          activeTileRequests -= 1;
           if (map.userData.disposed) {
             texture.dispose();
+            loadNextTiles();
             return;
           }
           texture.colorSpace = THREE.SRGBColorSpace;
           material.map = texture;
           material.color.set("#ffffff");
           material.needsUpdate = true;
+          loadNextTiles();
         },
         undefined,
         (error: unknown) => {
           console.warn(`Unable to load Paris map tile ${x}/${y}`, error);
+          activeTileRequests -= 1;
+          loadNextTiles();
         },
       );
     }
-  }
+  };
+  loadNextTiles();
 
   const eiffelAnchor = new THREE.Group();
   eiffelAnchor.name = "eiffel-tower-anchor";
-  eiffelAnchor.position.set(towerPosition.x, -0.62, towerPosition.z);
+  eiffelAnchor.position.set(towerPosition.x, -0.625, towerPosition.y);
   map.add(eiffelAnchor);
+  return projection;
 }
 
 function addOfficeDesk(map: THREE.Group) {
@@ -433,17 +520,20 @@ function addOfficeDesk(map: THREE.Group) {
 function createOfficeObject(index: number) {
   const object = new THREE.Group();
   if (index === 0) {
-    addBox(object, [1.62, 1.02, 0.12], [0, 0.52, 0], "#b5b6a8", 0.42);
-    addBox(object, [1.46, 0.86, 0.025], [0, 0.53, 0.07], "#557d70", 0.24);
-    addBox(object, [1.3, 0.045, 0.015], [0, 0.85, 0.09], "#d4ddca", 0.42);
+    const monitor = new THREE.Group();
+    addBox(monitor, [1.62, 1.02, 0.12], [0, 0.52, 0], "#b5b6a8", 0.42);
+    addBox(monitor, [1.46, 0.86, 0.025], [0, 0.53, 0.07], "#557d70", 0.24);
+    addBox(monitor, [1.3, 0.045, 0.015], [0, 0.85, 0.09], "#d4ddca", 0.42);
     for (const x of [-0.38, -0.08, 0.22, 0.52]) {
-      addBox(object, [0.025, 0.56, 0.015], [x, 0.47, 0.09], "#a8c4ae", 0.45);
+      addBox(monitor, [0.025, 0.56, 0.015], [x, 0.47, 0.09], "#a8c4ae", 0.45);
     }
     for (const y of [0.25, 0.42, 0.59]) {
-      addBox(object, [1.3, 0.018, 0.015], [0, y, 0.09], "#a8c4ae", 0.45);
+      addBox(monitor, [1.3, 0.018, 0.015], [0, y, 0.09], "#a8c4ae", 0.45);
     }
-    addBox(object, [0.18, 0.35, 0.2], [0, 0.02, 0], "#a79b80");
-    addBox(object, [0.68, 0.05, 0.08], [0, -0.17, 0.02], "#a79b80");
+    addBox(monitor, [0.18, 0.35, 0.2], [0, 0.02, 0], "#a79b80");
+    addBox(monitor, [0.68, 0.05, 0.08], [0, -0.17, 0.02], "#a79b80");
+    monitor.position.x = 1.2;
+    object.add(monitor);
   } else if (index === 1) {
     addBox(object, [1.22, 0.08, 0.42], [0, 0, 0], "#292e2d", 0.36);
     for (let row = 0; row < 3; row += 1) {
@@ -549,65 +639,6 @@ function createLabel(text: string, active: boolean) {
   sprite.scale.set(Math.min(2.8, Math.max(1.55, labelWidth / 350)), 0.58, 1);
   sprite.position.set(0, 0.48, 0);
   return sprite;
-}
-
-function createParisBuilding(index: number, active: boolean) {
-  const building = new THREE.Group();
-  const width = index % 2 === 0 ? 0.78 : 0.66;
-  const height = 0.88 + (index % 3) * 0.16;
-  const facade = active ? "#e0c7a3" : "#c7b69b";
-  addBox(building, [width, height, 0.62], [0, height / 2 - 0.25, 0], facade);
-
-  if (index % 3 === 0) {
-    const roof = new THREE.Mesh(
-      new THREE.ConeGeometry(width * 0.74, 0.42, 4),
-      new THREE.MeshStandardMaterial({ color: "#414c4d" }),
-    );
-    roof.rotation.y = Math.PI / 4;
-    roof.position.y = height - 0.02;
-    building.add(roof);
-  } else if (index % 3 === 1) {
-    addBox(
-      building,
-      [width + 0.12, 0.12, 0.72],
-      [0, height - 0.06, 0],
-      "#434d4e",
-    );
-    addBox(
-      building,
-      [width * 0.62, 0.28, 0.52],
-      [0, height + 0.12, 0],
-      "#515b5a",
-    );
-  } else {
-    const roof = new THREE.Mesh(
-      new THREE.SphereGeometry(
-        width * 0.43,
-        12,
-        8,
-        0,
-        Math.PI * 2,
-        0,
-        Math.PI / 2,
-      ),
-      new THREE.MeshStandardMaterial({ color: "#4c5756" }),
-    );
-    roof.position.y = height - 0.02;
-    building.add(roof);
-  }
-
-  for (let row = 0; row < 2; row += 1) {
-    for (let column = -1; column <= 1; column += 1) {
-      addBox(
-        building,
-        [0.09, 0.14, 0.025],
-        [column * width * 0.27, 0.05 + row * 0.31, 0.32],
-        "#59666a",
-        0.35,
-      );
-    }
-  }
-  return building;
 }
 
 function createInteriorFurniture(index: number, active: boolean) {
@@ -744,10 +775,27 @@ function CaseStudyMap3D({
       0.1,
       100,
     );
+    const parisCameraDistance =
+      caseId === "geospatial"
+        ? ((PARIS_TILE_SIZE * 3) /
+            (2 * Math.tan((camera.fov * Math.PI) / 360) * camera.aspect)) *
+          1.08
+        : null;
+    const parisCameraHeight = parisCameraDistance
+      ? parisCameraDistance * 0.88
+      : null;
     camera.position.set(
       0,
-      caseId === "omni-3d" ? 3.1 : 3.45,
-      caseId === "omni-3d" ? 8.2 : caseId === "geospatial" ? 10.5 : 7.7,
+      caseId === "omni-3d"
+        ? 3.1
+        : parisCameraHeight
+          ? 0.05 + parisCameraHeight
+          : 3.45,
+      caseId === "omni-3d"
+        ? 8.2
+        : parisCameraDistance && parisCameraHeight
+          ? Math.sqrt(parisCameraDistance ** 2 - parisCameraHeight ** 2)
+          : 7.7,
     );
 
     scene.add(new THREE.HemisphereLight("#e3efd7", "#1c241d", 2.2));
@@ -763,6 +811,7 @@ function CaseStudyMap3D({
     if (caseId === "homelane") addInteriorRoom(map);
     if (caseId === "geospatial") addParisCity(map);
     if (caseId === "timesheet-ai") addOfficeDesk(map);
+    let disposed = false;
     const modelTargets: {
       parent: THREE.Group;
       url: string;
@@ -829,14 +878,7 @@ function CaseStudyMap3D({
         ];
         node.position.set(...roomPositions[index % roomPositions.length]);
       } else if (caseId === "geospatial") {
-        const cityPositions: [number, number, number][] = [
-          [-2.65, -0.3, -2.2],
-          [2.55, -0.3, -2.35],
-          [-2.8, -0.3, 1.2],
-          [2.85, -0.3, 1.15],
-          [0.15, -0.3, 3.05],
-        ];
-        node.position.set(...cityPositions[index % cityPositions.length]);
+        node.position.set(0, -0.625, 0);
       } else if (caseId === "timesheet-ai") {
         const deskPositions: [number, number, number][] = [
           [-1.35, -0.16, -0.48],
@@ -900,9 +942,7 @@ function CaseStudyMap3D({
           ),
         );
       } else if (caseId === "geospatial") {
-        node.add(
-          createParisBuilding(index, feature.id === activeFeatureRef.current),
-        );
+        node.userData.featureIndex = index;
       } else if (caseId === "timesheet-ai") {
         node.add(createOfficeObject(index));
       } else if (caseId === "webgl-editor") {
@@ -953,7 +993,7 @@ function CaseStudyMap3D({
         );
         baseRing.userData.nodeRing = true;
         baseRing.rotation.x = Math.PI / 2;
-        baseRing.position.y = -0.48;
+        baseRing.position.y = caseId === "geospatial" ? 0.008 : -0.48;
         node.add(baseRing);
       }
 
@@ -979,7 +1019,6 @@ function CaseStudyMap3D({
         });
       }
     }
-    let disposed = false;
     const modelLoader = new GLTFLoader();
     const dracoLoader = new DRACOLoader();
     dracoLoader.setDecoderPath(`${import.meta.env.BASE_URL}draco/`);
@@ -1025,9 +1064,17 @@ function CaseStudyMap3D({
     controls.dampingFactor = 0.07;
     controls.enablePan = false;
     controls.minDistance =
-      caseId === "omni-3d" ? 7.5 : caseId === "geospatial" ? 8.8 : 6.5;
+      caseId === "omni-3d"
+        ? 7.5
+        : parisCameraDistance
+          ? parisCameraDistance * 0.82
+          : 6.5;
     controls.maxDistance =
-      caseId === "omni-3d" ? 11 : caseId === "geospatial" ? 14 : 10;
+      caseId === "omni-3d"
+        ? 11
+        : parisCameraDistance
+          ? parisCameraDistance * 1.45
+          : 10;
     controls.minPolarAngle = 0.72;
     controls.maxPolarAngle = 1.65;
     const reducedMotion = window.matchMedia(

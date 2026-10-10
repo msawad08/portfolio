@@ -48,19 +48,48 @@ function addBeam(
 }
 
 function addCarStudio(map: THREE.Group) {
-  const floor = new THREE.Mesh(
-    new THREE.CylinderGeometry(3.5, 3.5, 0.12, 64),
+  const platform = new THREE.Mesh(
+    new THREE.CylinderGeometry(3.55, 3.62, 0.28, 64),
     new THREE.MeshStandardMaterial({
-      color: "#26312d",
+      color: "#5b655f",
       metalness: 0.45,
       roughness: 0.32,
     }),
   );
-  floor.position.y = -0.58;
-  map.add(floor);
+  platform.position.y = -0.82;
+  map.add(platform);
+  const studioDeck = new THREE.Mesh(
+    new THREE.CylinderGeometry(3.5, 3.5, 0.04, 64),
+    new THREE.MeshStandardMaterial({
+      color: "#252e2a",
+      metalness: 0.28,
+      roughness: 0.34,
+    }),
+  );
+  studioDeck.position.y = -0.66;
+  map.add(studioDeck);
+  const stageRing = new THREE.Mesh(
+    new THREE.TorusGeometry(3.48, 0.025, 8, 96),
+    new THREE.MeshStandardMaterial({
+      color: "#9cad94",
+      metalness: 0.6,
+      roughness: 0.3,
+    }),
+  );
+  stageRing.rotation.x = Math.PI / 2;
+  stageRing.position.y = -0.62;
+  map.add(stageRing);
+  for (const [x, z] of [
+    [-2.65, -1.6],
+    [2.65, -1.6],
+  ]) {
+    const softbox = addBox(map, [0.13, 2.7, 1.05], [x, 1.18, z], "#e2d9bb");
+    softbox.rotation.z = -0.08;
+  }
+}
 
+function createCar() {
   const car = new THREE.Group();
-  map.add(car);
   const profile = new THREE.Shape();
   profile.moveTo(-1.6, -0.25);
   profile.lineTo(1.6, -0.25);
@@ -112,7 +141,7 @@ function addCarStudio(map: THREE.Group) {
   addBox(car, [0.12, 0.12, 0.32], [1.64, 0.04, 0.42], "#e8d9a3", 0.26);
 
   for (const x of [-1.05, 1.02]) {
-    for (const z of [-0.7, 0.7]) {
+    for (const z of [-0.68, 0.68]) {
       const wheel = new THREE.Mesh(
         new THREE.CylinderGeometry(0.38, 0.38, 0.22, 20),
         new THREE.MeshStandardMaterial({
@@ -121,7 +150,7 @@ function addCarStudio(map: THREE.Group) {
         }),
       );
       wheel.rotation.x = Math.PI / 2;
-      wheel.position.set(x, -0.24, z * 1.16);
+      wheel.position.set(x, -0.24, z);
       car.add(wheel);
       const hub = new THREE.Mesh(
         new THREE.CylinderGeometry(0.16, 0.16, 0.035, 16),
@@ -132,18 +161,183 @@ function addCarStudio(map: THREE.Group) {
         }),
       );
       hub.rotation.x = Math.PI / 2;
-      hub.position.set(x, -0.24, z * 1.29);
+      hub.position.set(x, -0.24, z * 1.16);
       car.add(hub);
     }
   }
+  return car;
+}
 
-  for (const [x, z] of [
-    [-2.65, -1.6],
-    [2.65, -1.6],
-  ]) {
-    const softbox = addBox(map, [0.13, 2.7, 1.05], [x, 1.18, z], "#e2d9bb");
-    softbox.rotation.z = -0.08;
+function createCameraRig() {
+  const rig = new THREE.Group();
+  const legs: [number, number, number][] = [
+    [-0.38, -0.48, -0.34],
+    [0.38, -0.48, -0.34],
+    [0, -0.48, 0.42],
+  ];
+  for (const [x, y, z] of legs) {
+    addBeam(
+      rig,
+      new THREE.Vector3(0, 0.1, 0),
+      new THREE.Vector3(x, y, z),
+      0.035,
+      "#38413c",
+    );
   }
+  addBox(rig, [0.96, 0.58, 0.5], [0, 0.62, -0.08], "#39443e", 0.32);
+  addBox(rig, [0.52, 0.39, 0.035], [0, 0.63, 0.18], "#7b9480", 0.25);
+  addBox(rig, [0.4, 0.1, 0.13], [0, 0.98, -0.08], "#313b36", 0.38);
+  const lens = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.16, 0.19, 0.34, 20),
+    new THREE.MeshStandardMaterial({
+      color: "#222b29",
+      metalness: 0.62,
+      roughness: 0.2,
+    }),
+  );
+  lens.rotation.x = Math.PI / 2;
+  lens.position.set(0, 0.6, 0.39);
+  rig.add(lens);
+  const lensGlass = new THREE.Mesh(
+    new THREE.CircleGeometry(0.12, 20),
+    new THREE.MeshBasicMaterial({ color: "#91b9ae" }),
+  );
+  lensGlass.position.set(0, 0.6, 0.58);
+  rig.add(lensGlass);
+  return rig;
+}
+
+function createPlatformRack() {
+  const rack = new THREE.Group();
+  addBox(rack, [0.82, 1.2, 0.62], [0, 0.58, 0], "#3b4540", 0.34);
+  addBox(rack, [0.72, 0.22, 0.04], [0, 0.96, 0.33], "#202926", 0.28);
+  for (let row = 0; row < 3; row += 1) {
+    addBox(
+      rack,
+      [0.68, 0.025, 0.035],
+      [0, 0.7 - row * 0.28, 0.34],
+      "#899488",
+      0.4,
+    );
+    for (let light = 0; light < 4; light += 1) {
+      const led = new THREE.Mesh(
+        new THREE.SphereGeometry(0.035, 8, 8),
+        new THREE.MeshBasicMaterial({
+          color: light % 2 === 0 ? "#a6cb84" : "#d5b875",
+        }),
+      );
+      led.position.set(-0.24 + light * 0.16, 0.62 - row * 0.28, 0.37);
+      rack.add(led);
+    }
+  }
+  for (const x of [-0.34, 0.34]) {
+    for (const z of [-0.24, 0.24]) {
+      addBox(rack, [0.08, 0.12, 0.08], [x, -0.03, z], "#313a35");
+    }
+  }
+  return rack;
+}
+
+function createWorkflowGraph() {
+  const graph = new THREE.Group();
+  const nodePositions: [number, number, number][] = [
+    [-0.5, 0.55, 0],
+    [0.48, 0.92, 0],
+    [0.55, 0.12, 0],
+    [1.35, 0.55, 0],
+  ];
+  const links: [number, number][] = [
+    [0, 1],
+    [0, 2],
+    [1, 3],
+    [2, 3],
+  ];
+  links.forEach(([from, to]) => {
+    addBeam(
+      graph,
+      new THREE.Vector3(...nodePositions[from]),
+      new THREE.Vector3(...nodePositions[to]),
+      0.025,
+      "#7d9677",
+    );
+  });
+  nodePositions.forEach((position, index) => {
+    const node = new THREE.Mesh(
+      new THREE.IcosahedronGeometry(index === 0 ? 0.25 : 0.18, 1),
+      new THREE.MeshStandardMaterial({
+        color: index === 0 ? "#b7c879" : "#829a87",
+        emissive: "#283c31",
+        metalness: 0.38,
+        roughness: 0.3,
+      }),
+    );
+    node.position.set(...position);
+    graph.add(node);
+  });
+  return graph;
+}
+
+function createImagePreview() {
+  const preview = new THREE.Group();
+  addBox(preview, [1.25, 1.05, 0.12], [0, 0.48, 0], "#35423d", 0.45);
+  const image = new THREE.Mesh(
+    new THREE.PlaneGeometry(1.05, 0.82),
+    new THREE.MeshBasicMaterial({ color: "#9caf92" }),
+  );
+  image.position.set(0, 0.52, 0.075);
+  preview.add(image);
+  const sun = new THREE.Mesh(
+    new THREE.SphereGeometry(0.12, 16, 12),
+    new THREE.MeshBasicMaterial({ color: "#e2c88f" }),
+  );
+  sun.position.set(0.27, 0.72, 0.095);
+  preview.add(sun);
+  const ridge = new THREE.Mesh(
+    new THREE.ConeGeometry(0.42, 0.52, 3),
+    new THREE.MeshBasicMaterial({ color: "#586f62" }),
+  );
+  ridge.rotation.z = Math.PI;
+  ridge.position.set(-0.24, 0.32, 0.1);
+  preview.add(ridge);
+  return preview;
+}
+
+function createOmniFeature(index: number) {
+  if (index === 0) return createCar();
+  if (index === 1) return createCameraRig();
+  if (index === 2) return createWorkflowGraph();
+  if (index === 4) return createPlatformRack();
+  return createImagePreview();
+}
+
+function createEditorPlanet(index: number, active: boolean) {
+  const planet = new THREE.Group();
+  const colors = ["#c98764", "#78a9a2", "#d2b675", "#8393bd", "#b47782"];
+  const sphere = new THREE.Mesh(
+    new THREE.SphereGeometry(0.23 + (index % 2) * 0.06, 24, 18),
+    new THREE.MeshStandardMaterial({
+      color: active ? "#d3e69a" : colors[index % colors.length],
+      emissive: colors[index % colors.length],
+      emissiveIntensity: active ? 0.45 : 0.12,
+      roughness: 0.42,
+      metalness: 0.08,
+    }),
+  );
+  sphere.userData.featureSphere = true;
+  sphere.userData.baseColor = colors[index % colors.length];
+  planet.add(sphere);
+  const orbit = new THREE.Mesh(
+    new THREE.TorusGeometry(0.48 + (index % 2) * 0.1, 0.012, 6, 48),
+    new THREE.MeshBasicMaterial({
+      color: active ? "#d5e59b" : "#7f9672",
+      transparent: true,
+      opacity: active ? 0.95 : 0.55,
+    }),
+  );
+  orbit.rotation.x = Math.PI / 2.7;
+  orbit.userData.nodeRing = true;
+  planet.add(orbit);
+  return planet;
 }
 
 function addInteriorRoom(map: THREE.Group) {
@@ -506,6 +700,15 @@ function CaseStudyMap3D({
         if (!(object instanceof THREE.Mesh)) return;
         const material = object.material;
         if (
+          object.userData.featureSphere &&
+          material instanceof THREE.MeshStandardMaterial
+        ) {
+          material.color.set(
+            active ? "#e7e5b0" : String(object.userData.baseColor ?? "#78a9a2"),
+          );
+          material.emissiveIntensity = active ? 0.45 : 0.12;
+        }
+        if (
           object.userData.nodeSphere &&
           material instanceof THREE.MeshStandardMaterial
         ) {
@@ -593,29 +796,20 @@ function CaseStudyMap3D({
 
     if (caseId === "webgl-editor") {
       const hub = new THREE.Mesh(
-        new THREE.SphereGeometry(0.63, 32, 24),
+        new THREE.SphereGeometry(0.5, 32, 24),
         new THREE.MeshStandardMaterial({
-          color: "#35492f",
-          emissive: "#233b20",
-          emissiveIntensity: 0.75,
-          metalness: 0.45,
-          roughness: 0.28,
+          color: "#e4bd70",
+          emissive: "#b77835",
+          emissiveIntensity: 1.2,
+          metalness: 0.1,
+          roughness: 0.42,
         }),
       );
       hub.position.y = 0.55;
       map.add(hub);
-
-      const hubRing = new THREE.Mesh(
-        new THREE.TorusGeometry(1.08, 0.012, 6, 96),
-        new THREE.MeshBasicMaterial({
-          color: "#82996a",
-          transparent: true,
-          opacity: 0.65,
-        }),
-      );
-      hubRing.rotation.x = Math.PI / 2;
-      hubRing.position.y = 0.55;
-      map.add(hubRing);
+      const sunLight = new THREE.PointLight("#f4c77c", 2.5, 8);
+      sunLight.position.copy(hub.position);
+      map.add(sunLight);
     }
 
     const nodeGroups: THREE.Group[] = [];
@@ -623,7 +817,16 @@ function CaseStudyMap3D({
     features.forEach((feature, index) => {
       const angle = (index / features.length) * Math.PI * 2 - Math.PI / 2;
       const node = new THREE.Group();
-      if (caseId === "homelane") {
+      if (caseId === "omni-3d") {
+        const studioPositions: [number, number, number][] = [
+          [0, 0, 0],
+          [2.35, -0.1, 1.25],
+          [-2.25, -0.1, -1.15],
+          [-2.25, -0.1, 1.45],
+          [2.25, -0.1, -1.35],
+        ];
+        node.position.set(...studioPositions[index % studioPositions.length]);
+      } else if (caseId === "homelane") {
         node.position.set(
           (index - (features.length - 1) / 2) * 1.65,
           -0.18,
@@ -655,7 +858,9 @@ function CaseStudyMap3D({
       node.userData.label = feature.title;
       node.userData.baseY = node.position.y;
 
-      if (caseId === "homelane") {
+      if (caseId === "omni-3d") {
+        node.add(createOmniFeature(index));
+      } else if (caseId === "homelane") {
         node.add(
           createInteriorFurniture(
             index,
@@ -668,6 +873,10 @@ function CaseStudyMap3D({
         );
       } else if (caseId === "timesheet-ai") {
         node.add(createOfficeObject(index));
+      } else if (caseId === "webgl-editor") {
+        node.add(
+          createEditorPlanet(index, feature.id === activeFeatureRef.current),
+        );
       } else {
         const sphere = new THREE.Mesh(
           new THREE.IcosahedronGeometry(0.24, 2),
@@ -696,10 +905,20 @@ function CaseStudyMap3D({
         node.add(ring);
       }
 
-      if (caseId === "homelane" || caseId === "geospatial") {
+      if (
+        caseId === "omni-3d" ||
+        caseId === "homelane" ||
+        caseId === "geospatial"
+      ) {
         const baseRing = new THREE.Mesh(
           new THREE.TorusGeometry(
-            caseId === "geospatial" ? 0.52 : 0.72,
+            caseId === "omni-3d"
+              ? index === 0
+                ? 1.72
+                : 0.62
+              : caseId === "geospatial"
+                ? 0.52
+                : 0.72,
             0.014,
             6,
             48,
@@ -712,40 +931,16 @@ function CaseStudyMap3D({
         );
         baseRing.userData.nodeRing = true;
         baseRing.rotation.x = Math.PI / 2;
-        baseRing.position.y = -0.48;
+        baseRing.position.y = caseId === "omni-3d" ? -0.62 : -0.48;
         node.add(baseRing);
       }
 
-      const sceneLabels: Record<string, string[]> = {
-        "omni-3d": [
-          "PLATFORM",
-          "PIXEL STREAM",
-          "AI WORKFLOWS",
-          "IMAGE GEN",
-          "NODE GRAPH",
-        ],
-        homelane: ["WARDROBE", "KITCHEN", "TV UNIT"],
-        geospatial: ["DATA SETS", "WEB WORKERS", "CITY / WEBVR"],
-        "timesheet-ai": [
-          "MONITOR",
-          "KEYBOARD",
-          "MOUSE",
-          "DESK NOTES",
-          "TASK LAMP",
-        ],
-      };
-      const label = createLabel(
-        sceneLabels[caseId]?.[index] ?? feature.title,
-        feature.id === activeFeatureRef.current,
-      );
+      const label = createLabel(feature.title, false);
+      if (label) label.visible = false;
       if (label) {
-        if (caseId === "homelane") {
-          label.position.y = 1.35;
-        } else if (caseId === "geospatial") {
-          label.position.y = 1.85;
-        } else if (caseId === "timesheet-ai") {
-          label.position.y = index === 0 ? 1.55 : 0.65;
-        }
+        label.position.y =
+          caseId === "geospatial" ? 1.85 : caseId === "omni-3d" ? 1.65 : 1.35;
+        node.userData.hoverLabel = label;
         node.add(label);
       }
       map.add(node);
@@ -796,6 +991,37 @@ function CaseStudyMap3D({
     const raycaster = new THREE.Raycaster();
     const pointer = new THREE.Vector2();
     let pointerDown: { x: number; y: number } | null = null;
+    let hoveredNode: THREE.Group | null = null;
+    const setHoveredNode = (node: THREE.Group | null) => {
+      if (hoveredNode === node) return;
+      if (hoveredNode?.userData.hoverLabel instanceof THREE.Sprite) {
+        hoveredNode.userData.hoverLabel.visible = false;
+      }
+      hoveredNode = node;
+      if (hoveredNode?.userData.hoverLabel instanceof THREE.Sprite) {
+        hoveredNode.userData.hoverLabel.visible = true;
+      }
+      renderer.domElement.style.cursor = hoveredNode ? "pointer" : "grab";
+      renderRequestRef.current?.();
+    };
+    const featureAtPointer = (event: PointerEvent) => {
+      const bounds = renderer.domElement.getBoundingClientRect();
+      pointer.set(
+        ((event.clientX - bounds.left) / bounds.width) * 2 - 1,
+        -((event.clientY - bounds.top) / bounds.height) * 2 + 1,
+      );
+      raycaster.setFromCamera(pointer, camera);
+      const hit = raycaster.intersectObjects(nodeGroups, true)[0];
+      let target: THREE.Object3D | null = hit?.object ?? null;
+      while (target && typeof target.userData.featureId !== "string") {
+        target = target.parent;
+      }
+      return target instanceof THREE.Group ? target : null;
+    };
+    const handlePointerMove = (event: PointerEvent) => {
+      setHoveredNode(featureAtPointer(event));
+    };
+    const handlePointerLeave = () => setHoveredNode(null);
     const handlePointerDown = (event: PointerEvent) => {
       pointerDown = { x: event.clientX, y: event.clientY };
     };
@@ -808,20 +1034,12 @@ function CaseStudyMap3D({
       pointerDown = null;
       if (moved > 6) return;
 
-      const bounds = renderer.domElement.getBoundingClientRect();
-      pointer.set(
-        ((event.clientX - bounds.left) / bounds.width) * 2 - 1,
-        -((event.clientY - bounds.top) / bounds.height) * 2 + 1,
-      );
-      raycaster.setFromCamera(pointer, camera);
-      const hit = raycaster.intersectObjects(nodeGroups, true)[0];
-      let target: THREE.Object3D | null = hit?.object ?? null;
-      while (target && typeof target.userData.featureId !== "string") {
-        target = target.parent;
-      }
+      const target = featureAtPointer(event);
       if (target)
         featureCallbackRef.current(target.userData.featureId as string);
     };
+    renderer.domElement.addEventListener("pointermove", handlePointerMove);
+    renderer.domElement.addEventListener("pointerleave", handlePointerLeave);
     renderer.domElement.addEventListener("pointerdown", handlePointerDown);
     renderer.domElement.addEventListener("pointerup", handlePointerUp);
 
@@ -838,17 +1056,6 @@ function CaseStudyMap3D({
     const render = () => {
       animationFrame = 0;
       controls.update();
-      if (
-        !pausedRef.current &&
-        !reducedMotionRef.current &&
-        (caseId === "webgl-editor" || caseId === "omni-3d")
-      ) {
-        nodeGroups.forEach((node, index) => {
-          node.position.y =
-            node.userData.baseY +
-            Math.sin(performance.now() * 0.0007 + index) * 0.035;
-        });
-      }
       renderer.render(scene, camera);
       if (!pausedRef.current && !reducedMotionRef.current) scheduleRender();
     };
@@ -864,6 +1071,11 @@ function CaseStudyMap3D({
     return () => {
       if (animationFrame !== 0) window.cancelAnimationFrame(animationFrame);
       resizeObserver.disconnect();
+      renderer.domElement.removeEventListener("pointermove", handlePointerMove);
+      renderer.domElement.removeEventListener(
+        "pointerleave",
+        handlePointerLeave,
+      );
       renderer.domElement.removeEventListener("pointerdown", handlePointerDown);
       renderer.domElement.removeEventListener("pointerup", handlePointerUp);
       renderer.domElement.removeEventListener(

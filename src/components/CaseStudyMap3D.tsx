@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
+import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import carModelUrl from "../assets/3d-models/low-poly_toyota_corolla_e80_sedan.glb?url";
+import cameraModelUrl from "../assets/3d-models/camera.glb?url";
+import eiffelModelUrl from "../assets/3d-models/Eiffel.glb?url";
 import type { CaseStudyFeature } from "../content/case-studies";
 
 type CaseStudyMap3DProps = {
@@ -49,27 +54,27 @@ function addBeam(
 
 function addCarStudio(map: THREE.Group) {
   const platform = new THREE.Mesh(
-    new THREE.CylinderGeometry(3.55, 3.62, 0.28, 64),
+    new THREE.CylinderGeometry(2.9, 2.96, 0.24, 64),
     new THREE.MeshStandardMaterial({
       color: "#5b655f",
       metalness: 0.45,
       roughness: 0.32,
     }),
   );
-  platform.position.y = -0.82;
+  platform.position.y = -0.68;
   map.add(platform);
   const studioDeck = new THREE.Mesh(
-    new THREE.CylinderGeometry(3.5, 3.5, 0.04, 64),
+    new THREE.CylinderGeometry(2.85, 2.85, 0.035, 64),
     new THREE.MeshStandardMaterial({
       color: "#252e2a",
       metalness: 0.28,
       roughness: 0.34,
     }),
   );
-  studioDeck.position.y = -0.66;
+  studioDeck.position.y = -0.535;
   map.add(studioDeck);
   const stageRing = new THREE.Mesh(
-    new THREE.TorusGeometry(3.48, 0.025, 8, 96),
+    new THREE.TorusGeometry(2.83, 0.018, 8, 96),
     new THREE.MeshStandardMaterial({
       color: "#9cad94",
       metalness: 0.6,
@@ -77,98 +82,11 @@ function addCarStudio(map: THREE.Group) {
     }),
   );
   stageRing.rotation.x = Math.PI / 2;
-  stageRing.position.y = -0.62;
+  stageRing.position.y = -0.51;
   map.add(stageRing);
-  for (const [x, z] of [
-    [-2.65, -1.6],
-    [2.65, -1.6],
-  ]) {
-    const softbox = addBox(map, [0.13, 2.7, 1.05], [x, 1.18, z], "#e2d9bb");
-    softbox.rotation.z = -0.08;
-  }
 }
 
-function createCar() {
-  const car = new THREE.Group();
-  const profile = new THREE.Shape();
-  profile.moveTo(-1.6, -0.25);
-  profile.lineTo(1.6, -0.25);
-  profile.lineTo(1.6, 0.12);
-  profile.lineTo(1.2, 0.28);
-  profile.lineTo(0.72, 0.82);
-  profile.lineTo(-0.62, 0.82);
-  profile.lineTo(-1.08, 0.34);
-  profile.lineTo(-1.6, 0.2);
-  profile.closePath();
-  const body = new THREE.Mesh(
-    new THREE.ExtrudeGeometry(profile, {
-      depth: 1.32,
-      bevelEnabled: true,
-      bevelSegments: 2,
-      bevelSize: 0.06,
-      bevelThickness: 0.06,
-      steps: 1,
-    }),
-    new THREE.MeshStandardMaterial({
-      color: "#94aa99",
-      metalness: 0.46,
-      roughness: 0.25,
-    }),
-  );
-  body.position.set(0, -0.08, -0.66);
-  car.add(body);
-  const windowShape = new THREE.Shape();
-  windowShape.moveTo(-0.9, 0.4);
-  windowShape.lineTo(-0.55, 0.75);
-  windowShape.lineTo(0.62, 0.75);
-  windowShape.lineTo(0.31, 0.4);
-  windowShape.closePath();
-  const windows = new THREE.Mesh(
-    new THREE.ShapeGeometry(windowShape),
-    new THREE.MeshStandardMaterial({
-      color: "#243b3a",
-      metalness: 0.28,
-      roughness: 0.2,
-      side: THREE.DoubleSide,
-    }),
-  );
-  windows.position.set(0, 0, 0.68);
-  car.add(windows);
-  const farWindows = windows.clone();
-  farWindows.position.z = -0.68;
-  car.add(farWindows);
-  addBox(car, [0.12, 0.12, 0.32], [1.64, 0.04, -0.42], "#e8d9a3", 0.26);
-  addBox(car, [0.12, 0.12, 0.32], [1.64, 0.04, 0.42], "#e8d9a3", 0.26);
-
-  for (const x of [-1.05, 1.02]) {
-    for (const z of [-0.68, 0.68]) {
-      const wheel = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.38, 0.38, 0.22, 20),
-        new THREE.MeshStandardMaterial({
-          color: "#303a36",
-          roughness: 0.62,
-        }),
-      );
-      wheel.rotation.x = Math.PI / 2;
-      wheel.position.set(x, -0.24, z);
-      car.add(wheel);
-      const hub = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.16, 0.16, 0.035, 16),
-        new THREE.MeshStandardMaterial({
-          color: "#b4b8a5",
-          metalness: 0.76,
-          roughness: 0.28,
-        }),
-      );
-      hub.rotation.x = Math.PI / 2;
-      hub.position.set(x, -0.24, z * 1.16);
-      car.add(hub);
-    }
-  }
-  return car;
-}
-
-function createCameraRig() {
+function createCameraFallback() {
   const rig = new THREE.Group();
   const legs: [number, number, number][] = [
     [-0.38, -0.48, -0.34],
@@ -205,6 +123,45 @@ function createCameraRig() {
   lensGlass.position.set(0, 0.6, 0.58);
   rig.add(lensGlass);
   return rig;
+}
+
+function fitModelToHeight(model: THREE.Object3D, height: number) {
+  model.updateMatrixWorld(true);
+  const initialBounds = new THREE.Box3().setFromObject(model);
+  const initialSize = initialBounds.getSize(new THREE.Vector3());
+  const largestDimension = Math.max(
+    initialSize.x,
+    initialSize.y,
+    initialSize.z,
+  );
+  if (!Number.isFinite(largestDimension) || largestDimension <= 0) {
+    throw new Error("3D model has no measurable geometry.");
+  }
+
+  model.scale.multiplyScalar(height / largestDimension);
+  model.updateMatrixWorld(true);
+  const bounds = new THREE.Box3().setFromObject(model);
+  const center = bounds.getCenter(new THREE.Vector3());
+  model.position.x -= center.x;
+  model.position.y -= bounds.min.y;
+  model.position.z -= center.z;
+  return model;
+}
+
+function disposeObject(object: THREE.Object3D) {
+  object.traverse((child) => {
+    if (!(child instanceof THREE.Mesh)) return;
+    child.geometry.dispose();
+    const materials = Array.isArray(child.material)
+      ? child.material
+      : [child.material];
+    materials.forEach((material) => {
+      if ("map" in material && material.map instanceof THREE.Texture) {
+        material.map.dispose();
+      }
+      material.dispose();
+    });
+  });
 }
 
 function createPlatformRack() {
@@ -303,8 +260,16 @@ function createImagePreview() {
 }
 
 function createOmniFeature(index: number) {
-  if (index === 0) return createCar();
-  if (index === 1) return createCameraRig();
+  if (index === 0) {
+    const placeholder = new THREE.Group();
+    placeholder.userData.modelFallback = true;
+    return placeholder;
+  }
+  if (index === 1) {
+    const placeholder = createCameraFallback();
+    placeholder.userData.modelFallback = true;
+    return placeholder;
+  }
   if (index === 2) return createWorkflowGraph();
   if (index === 4) return createPlatformRack();
   return createImagePreview();
@@ -348,53 +313,6 @@ function addInteriorRoom(map: THREE.Group) {
   addBox(map, [7, 0.06, 0.06], [0, -0.52, -1.91], "#d0c6b1");
 }
 
-function addEiffelTower(map: THREE.Group) {
-  const tower = new THREE.Group();
-  tower.position.set(0, 0.15, -1.85);
-  tower.scale.setScalar(1.18);
-  map.add(tower);
-  const bronze = "#bd9667";
-  const feet = [
-    new THREE.Vector3(-0.7, -0.55, -1.4),
-    new THREE.Vector3(0.7, -0.55, -1.4),
-    new THREE.Vector3(-0.7, -0.55, -0.1),
-    new THREE.Vector3(0.7, -0.55, -0.1),
-  ];
-  const shoulders = feet.map(
-    (foot) => new THREE.Vector3(foot.x * 0.36, 1.7, foot.z * 0.36 - 0.75),
-  );
-  feet.forEach((foot, index) => {
-    addBeam(tower, foot, shoulders[index], 0.045, bronze);
-    addBeam(
-      tower,
-      foot,
-      shoulders[(index + 1) % shoulders.length],
-      0.018,
-      bronze,
-    );
-  });
-  const waist = new THREE.Vector3(0, 1.7, -0.75);
-  const crown = new THREE.Vector3(0, 2.75, -0.75);
-  shoulders.forEach((shoulder) =>
-    addBeam(tower, shoulder, waist, 0.035, bronze),
-  );
-  addBeam(tower, waist, crown, 0.025, bronze);
-  addBeam(
-    tower,
-    new THREE.Vector3(-0.42, 1.05, -0.75),
-    new THREE.Vector3(0.42, 1.05, -0.75),
-    0.055,
-    bronze,
-  );
-  addBeam(
-    tower,
-    new THREE.Vector3(-0.25, 1.72, -0.75),
-    new THREE.Vector3(0.25, 1.72, -0.75),
-    0.05,
-    bronze,
-  );
-}
-
 function addParisCity(map: THREE.Group) {
   const pavement = new THREE.Mesh(
     new THREE.BoxGeometry(8, 0.1, 5),
@@ -402,6 +320,10 @@ function addParisCity(map: THREE.Group) {
   );
   pavement.position.set(0, -0.68, -1.1);
   map.add(pavement);
+  const eiffelAnchor = new THREE.Group();
+  eiffelAnchor.name = "eiffel-tower-anchor";
+  eiffelAnchor.position.set(0, -0.62, -1.7);
+  map.add(eiffelAnchor);
   const blocks = [
     [-3.05, 0.45, -2.4, 1.05, 1.6, 0.85],
     [2.95, 0.65, -2.35, 1.1, 2, 0.9],
@@ -434,7 +356,6 @@ function addParisCity(map: THREE.Group) {
       }
     }
   });
-  addEiffelTower(map);
 }
 
 function addOfficeDesk(map: THREE.Group) {
@@ -778,7 +699,11 @@ function CaseStudyMap3D({
       0.1,
       100,
     );
-    camera.position.set(0, 3.45, 7.7);
+    camera.position.set(
+      0,
+      caseId === "omni-3d" ? 3.1 : 3.45,
+      caseId === "omni-3d" ? 8.2 : 7.7,
+    );
 
     scene.add(new THREE.HemisphereLight("#e3efd7", "#1c241d", 2.2));
     const keyLight = new THREE.DirectionalLight("#fff0d8", 3);
@@ -793,6 +718,12 @@ function CaseStudyMap3D({
     if (caseId === "homelane") addInteriorRoom(map);
     if (caseId === "geospatial") addParisCity(map);
     if (caseId === "timesheet-ai") addOfficeDesk(map);
+    const modelTargets: {
+      parent: THREE.Group;
+      url: string;
+      height: number;
+      rotationY: number;
+    }[] = [];
 
     if (caseId === "webgl-editor") {
       const hub = new THREE.Mesh(
@@ -819,11 +750,11 @@ function CaseStudyMap3D({
       const node = new THREE.Group();
       if (caseId === "omni-3d") {
         const studioPositions: [number, number, number][] = [
-          [0, 0, 0],
-          [2.35, -0.1, 1.25],
-          [-2.25, -0.1, -1.15],
-          [-2.25, -0.1, 1.45],
-          [2.25, -0.1, -1.35],
+          [0, -0.5, 0],
+          [2.2, -0.52, 0.95],
+          [-2.15, -0.52, 0.95],
+          [-2.15, -0.52, -1.15],
+          [2.2, -0.52, -1.15],
         ];
         node.position.set(...studioPositions[index % studioPositions.length]);
       } else if (caseId === "homelane") {
@@ -860,6 +791,27 @@ function CaseStudyMap3D({
 
       if (caseId === "omni-3d") {
         node.add(createOmniFeature(index));
+        if (index === 0) {
+          modelTargets.push({
+            parent: node,
+            url: carModelUrl,
+            height: 2.5,
+            rotationY: Math.PI / 2,
+          });
+        } else if (index === 1) {
+          modelTargets.push({
+            parent: node,
+            url: cameraModelUrl,
+            height: 1.45,
+            rotationY: 0,
+          });
+        } else {
+          const display = node.children.find(
+            (child) =>
+              child instanceof THREE.Group && !child.userData.modelFallback,
+          );
+          if (display) display.scale.setScalar(0.72);
+        }
       } else if (caseId === "homelane") {
         node.add(
           createInteriorFurniture(
@@ -905,20 +857,10 @@ function CaseStudyMap3D({
         node.add(ring);
       }
 
-      if (
-        caseId === "omni-3d" ||
-        caseId === "homelane" ||
-        caseId === "geospatial"
-      ) {
+      if (caseId === "homelane" || caseId === "geospatial") {
         const baseRing = new THREE.Mesh(
           new THREE.TorusGeometry(
-            caseId === "omni-3d"
-              ? index === 0
-                ? 1.72
-                : 0.62
-              : caseId === "geospatial"
-                ? 0.52
-                : 0.72,
+            caseId === "geospatial" ? 0.52 : 0.72,
             0.014,
             6,
             48,
@@ -931,7 +873,7 @@ function CaseStudyMap3D({
         );
         baseRing.userData.nodeRing = true;
         baseRing.rotation.x = Math.PI / 2;
-        baseRing.position.y = caseId === "omni-3d" ? -0.62 : -0.48;
+        baseRing.position.y = -0.48;
         node.add(baseRing);
       }
 
@@ -945,6 +887,51 @@ function CaseStudyMap3D({
       }
       map.add(node);
       nodeGroups.push(node);
+    });
+    if (caseId === "geospatial") {
+      const eiffelAnchor = map.getObjectByName("eiffel-tower-anchor");
+      if (eiffelAnchor instanceof THREE.Group) {
+        modelTargets.push({
+          parent: eiffelAnchor,
+          url: eiffelModelUrl,
+          height: 3.8,
+          rotationY: 0,
+        });
+      }
+    }
+    let disposed = false;
+    const modelLoader = new GLTFLoader();
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath(`${import.meta.env.BASE_URL}draco/`);
+    modelLoader.setDRACOLoader(dracoLoader);
+    modelTargets.forEach(({ parent, url, height, rotationY }) => {
+      void modelLoader
+        .loadAsync(url)
+        .then(({ scene: model }) => {
+          if (disposed) {
+            disposeObject(model);
+            return;
+          }
+          const fallback = parent.children.find(
+            (child) => child.userData.modelFallback,
+          );
+          if (fallback) {
+            parent.remove(fallback);
+            disposeObject(fallback);
+          }
+          const fittedModel = fitModelToHeight(model, height);
+          fittedModel.rotation.y = rotationY;
+          fittedModel.traverse((child) => {
+            if (!(child instanceof THREE.Mesh)) return;
+            child.castShadow = true;
+            child.receiveShadow = true;
+          });
+          parent.add(fittedModel);
+          renderRequestRef.current?.();
+        })
+        .catch((error: unknown) => {
+          console.error(`Unable to load 3D model: ${url}`, error);
+        });
     });
     map.children.forEach((child) => {
       if (typeof child.userData.featureId !== "string") return;
@@ -969,12 +956,12 @@ function CaseStudyMap3D({
     });
 
     const controls = new OrbitControls(camera, renderer.domElement);
-    controls.target.set(0, 0.55, 0);
+    controls.target.set(0, caseId === "omni-3d" ? 0.05 : 0.55, 0);
     controls.enableDamping = true;
     controls.dampingFactor = 0.07;
     controls.enablePan = false;
-    controls.minDistance = 6.5;
-    controls.maxDistance = 10;
+    controls.minDistance = caseId === "omni-3d" ? 7.5 : 6.5;
+    controls.maxDistance = caseId === "omni-3d" ? 11 : 10;
     controls.minPolarAngle = 0.72;
     controls.maxPolarAngle = 1.65;
     const reducedMotion = window.matchMedia(
@@ -1069,6 +1056,8 @@ function CaseStudyMap3D({
     scheduleRender();
 
     return () => {
+      disposed = true;
+      dracoLoader.dispose();
       if (animationFrame !== 0) window.cancelAnimationFrame(animationFrame);
       resizeObserver.disconnect();
       renderer.domElement.removeEventListener("pointermove", handlePointerMove);

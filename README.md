@@ -47,6 +47,8 @@ The supplied resume is the source for the professional project selection, experi
 
 Direct email, older role dates, employer/client permissions, and any project-specific media must be verified before they are added. Unsupported facts are intentionally left out. See [`docs/content-sources.md`](docs/content-sources.md), [`docs/asset-licenses.md`](docs/asset-licenses.md), and [`docs/release-checklist.md`](docs/release-checklist.md).
 
+The AI-rendering scene uses D_U's [Toyota Corolla model](https://sketchfab.com/3d-models/low-poly-toyota-corolla-e80-sedan-6254cf268d9b46f79dd2a6511e153891), licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/); it has been scaled and repositioned. The supplied camera and Eiffel Tower models have no license metadata, so confirm redistribution rights before deploying them publicly.
+
 ## Project layout
 
 - `src/App.tsx` — portfolio sections and project navigation
